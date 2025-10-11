@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management - SwiftAid</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/hospital-management.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-ambulance"></i>
+                <span>SwiftAid</span>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="ambulances.html" class="nav-link">Ambulances</a>
+                </li>
+                <li class="nav-item">
+                    <a href="hospitals.html" class="nav-link active">Hospitals</a>
+                </li>
+                <li class="nav-item">
+                    <a href="drivers.html" class="nav-link">Drivers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="emergency-portal.html" class="nav-cta">Emergency Portal</a>
+                </li>
+            </ul>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1><i class="fas fa-hospital"></i> Hospital Management</h1>
+                    <p>Monitor hospital capacity and manage healthcare network</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="add-hospital-btn">
+                        <i class="fas fa-plus"></i>
+                        Add Hospital
+                    </button>
+                    <button class="btn btn-outline" id="refresh-data">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Cards -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon available">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="available-beds">0</div>
+                        <div class="stat-label">Available Beds</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon occupied">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="occupied-beds">0</div>
+                        <div class="stat-label">Occupied Beds</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon emergency">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="emergency-capacity">0</div>
+                        <div class="stat-label">Emergency Capacity</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="total-hospitals">0</div>
+                        <div class="stat-label">Total Hospitals</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="main-content">
+        <div class="container">
+            <div class="content-layout">
+                <!-- Hospital List -->
+                <div class="hospital-list-section">
+                    <div class="section-header">
+                        <h2>Hospital Network</h2>
+                        <div class="filters">
+                            <select id="type-filter">
+                                <option value="">All Types</option>
+                                <option value="general">General Hospital</option>
+                                <option value="specialty">Specialty Hospital</option>
+                                <option value="emergency">Emergency Center</option>
+                                <option value="trauma">Trauma Center</option>
+                            </select>
+                            <select id="capacity-filter">
+                                <option value="">All Capacity</option>
+                                <option value="high">High (80%+)</option>
+                                <option value="medium">Medium (50-80%)</option>
+                                <option value="low">Low (<50%)</option>
+                            </select>
+                            <input type="text" id="search-input" placeholder="Search hospitals...">
+                        </div>
+                    </div>
+                    
+                    <div class="hospital-grid" id="hospital-grid">
+                        <!-- Hospital cards will be populated here -->
+                    </div>
+                    
+                    <div class="loading-state" id="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading hospitals...</p>
+                    </div>
+                    
+                    <div class="empty-state" id="empty-state" style="display: none;">
+                        <i class="fas fa-hospital"></i>
+                        <h3>No Hospitals Found</h3>
+                        <p>Add your first hospital to get started</p>
+                        <button class="btn btn-primary" onclick="showAddHospitalModal()">
+                            <i class="fas fa-plus"></i>
+                            Add Hospital
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Map View -->
+                <div class="map-section">
+                    <div class="map-header">
+                        <h3>Hospital Locations</h3>
+                        <div class="map-controls">
+                            <button class="map-btn active" data-layer="all">All</button>
+                            <button class="map-btn" data-layer="available">Available</button>
+                            <button class="map-btn" data-layer="full">Full</button>
+                        </div>
+                    </div>
+                    <div id="hospital-map"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add/Edit Hospital Modal -->
+    <div class="modal-overlay" id="hospital-modal">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Hospital</h3>
+                <button class="close-btn" onclick="closeHospitalModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="modal-form" id="hospital-form">
+                <div class="form-section">
+                    <h4>Basic Information</h4>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="hospital-name">Hospital Name *</label>
+                            <input type="text" id="hospital-name" name="name" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="hospital-type">Type *</label>
+                            <select id="hospital-type" name="type" required>
+                                <option value="">Select Type</option>
+                                <option value="general">General Hospital</option>
+                                <option value="specialty">Specialty Hospital</option>
+                                <option value="emergency">Emergency Center</option>
+                                <option value="trauma">Trauma Center</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="emergency-contact">Emergency Contact</label>
+                            <input type="tel" id="emergency-contact" name="emergencyContact">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>Location</h4>
+                    <div class="form-field">
+                        <label for="address">Address *</label>
+                        <textarea id="address" name="address" rows="2" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="city">City *</label>
+                            <input type="text" id="city" name="city" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="pincode">Pin Code *</label>
+                            <input type="text" id="pincode" name="pincode" pattern="[0-9]{6}" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="latitude">Latitude</label>
+                            <input type="number" id="latitude" name="latitude" step="any">
+                        </div>
+                        <div class="form-field">
+                            <label for="longitude">Longitude</label>
+                            <input type="number" id="longitude" name="longitude" step="any">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>Capacity Information</h4>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="total-beds">Total Beds *</label>
+                            <input type="number" id="total-beds" name="totalBeds" min="1" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="available-beds-input">Available Beds</label>
+                            <input type="number" id="available-beds-input" name="availableBeds" min="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="emergency-beds">Emergency Beds</label>
+                            <input type="number" id="emergency-beds" name="emergencyBeds" min="0">
+                        </div>
+                        <div class="form-field">
+                            <label for="icu-beds">ICU Beds</label>
+                            <input type="number" id="icu-beds" name="icuBeds" min="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>Specialties & Services</h4>
+                    <div class="specialties-grid">
+                        <label class="specialty-checkbox">
+                            <input type="checkbox" name="specialties" value="cardiology">
+                            <span>Cardiology</span>
+                        </label>
+                        <label class="specialty-checkbox">
+                            <input type="checkbox" name="specialties" value="neurology">
+                            <span>Neurology</span>
+                        </label>
+                        <label class="specialty-checkbox">
+                            <input type="checkbox" name="specialties" value="orthopedics">
+                            <span>Orthopedics</span>
+                        </label>
+                        <label class="specialty-checkbox">
+                            <input type="checkbox" name="specialties" value="pediatrics">
+                            <span>Pediatrics</span>
+                        </label>
+                        <label class="specialty-checkbox">
+                            <input type="checkbox" name="specialties" value="oncology">
+                            <span>Oncology</span>
+                        </label>
+                        <label class="specialty-checkbox">
+                            <input type="checkbox" name="specialties" value="trauma">
+                            <span>Trauma Care</span>
+                        </label>
+                        <label class="specialty-checkbox">
+                            <input type="checkbox" name="specialties" value="maternity">
+                            <span>Maternity</span>
+                        </label>
+                        <label class="specialty-checkbox">
+                            <input type="checkbox" name="specialties" value="emergency">
+                            <span>Emergency Care</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>Additional Information</h4>
+                    <div class="form-field">
+                        <label for="equipment">Equipment & Facilities</label>
+                        <textarea id="equipment" name="equipment" rows="3" placeholder="List available medical equipment and facilities..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeHospitalModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Hospital
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hospital Details Modal -->
+    <div class="modal-overlay" id="details-modal">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3>Hospital Details</h3>
+                <button class="close-btn" onclick="closeDetailsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="hospital-details" id="hospital-details">
+                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/hospital-management.js"></script>
+</body>
+</html>

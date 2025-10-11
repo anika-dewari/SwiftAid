@@ -28,6 +28,236 @@ AOS.init({
     delay: 100
 });
 
+// API Configuration
+const API_CONFIG = {
+    BASE_URL: 'http://localhost:5000/api',
+    ENDPOINTS: {
+        AMBULANCES: '/ambulances',
+        HOSPITALS: '/hospitals',
+        DRIVERS: '/drivers',
+        EMERGENCIES: '/emergencies',
+        DISPATCH: '/dispatch'
+    },
+    TIMEOUT: 10000
+};
+
+// Navigation System
+class NavigationManager {
+    constructor() {
+        this.currentPage = this.getCurrentPage();
+        this.init();
+    }
+
+    getCurrentPage() {
+        const path = window.location.pathname;
+        const page = path.split('/').pop().replace('.html', '');
+        return page || 'index';
+    }
+
+    init() {
+        this.setupNavigationListeners();
+        this.updateActiveNavigation();
+    }
+
+    setupNavigationListeners() {
+        // Navigation buttons from main dashboard
+        const navButtons = {
+            'emergency-portal-btn': 'emergency-portal.html',
+            'ambulance-management-btn': 'ambulances.html',
+            'hospital-management-btn': 'hospitals.html',
+            'driver-management-btn': 'drivers.html'
+        };
+
+        Object.entries(navButtons).forEach(([buttonId, targetPage]) => {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.navigateTo(targetPage);
+                });
+            }
+        });
+
+        // Back to dashboard buttons
+        const backButtons = document.querySelectorAll('.back-to-dashboard, .btn-back');
+        backButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.navigateTo('index.html');
+            });
+        });
+
+        // Logo clicks
+        const logos = document.querySelectorAll('.logo, .navbar-brand');
+        logos.forEach(logo => {
+            logo.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.navigateTo('index.html');
+            });
+        });
+    }
+
+    navigateTo(page) {
+        // Add smooth transition
+        document.body.style.transition = 'opacity 0.3s ease';
+        document.body.style.opacity = '0.7';
+        
+        setTimeout(() => {
+            window.location.href = page;
+        }, 200);
+    }
+
+    updateActiveNavigation() {
+        const navItems = document.querySelectorAll('.nav-item, .sidebar-item');
+        navItems.forEach(item => {
+            const link = item.querySelector('a');
+            if (link) {
+                const href = link.getAttribute('href');
+                if (href && href.includes(this.currentPage)) {
+                    item.classList.add('active');
+                }
+            }
+        });
+    }
+}
+
+// API Utilities
+class APIManager {
+    constructor() {
+        this.baseURL = API_CONFIG.BASE_URL;
+        this.timeout = API_CONFIG.TIMEOUT;
+    }
+
+    async request(endpoint, options = {}) {
+        const url = `${this.baseURL}${endpoint}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
+            timeout: this.timeout,
+            ...options
+        };
+
+        try {
+            const response = await fetch(url, config);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('API Request failed:', error);
+            this.handleAPIError(error);
+            throw error;
+        }
+    }
+
+    handleAPIError(error) {
+        // Show user-friendly error message
+        if (typeof showToast === 'function') {
+            showToast('Connection error. Please check your network connection.', 'error');
+        }
+    }
+
+    // Ambulance API methods
+    async getAmbulances() {
+        return this.request(API_CONFIG.ENDPOINTS.AMBULANCES);
+    }
+
+    async createAmbulance(data) {
+        return this.request(API_CONFIG.ENDPOINTS.AMBULANCES, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    async updateAmbulance(id, data) {
+        return this.request(`${API_CONFIG.ENDPOINTS.AMBULANCES}/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    }
+
+    async deleteAmbulance(id) {
+        return this.request(`${API_CONFIG.ENDPOINTS.AMBULANCES}/${id}`, {
+            method: 'DELETE'
+        });
+    }
+
+    // Hospital API methods
+    async getHospitals() {
+        return this.request(API_CONFIG.ENDPOINTS.HOSPITALS);
+    }
+
+    async createHospital(data) {
+        return this.request(API_CONFIG.ENDPOINTS.HOSPITALS, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    async updateHospital(id, data) {
+        return this.request(`${API_CONFIG.ENDPOINTS.HOSPITALS}/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    }
+
+    async deleteHospital(id) {
+        return this.request(`${API_CONFIG.ENDPOINTS.HOSPITALS}/${id}`, {
+            method: 'DELETE'
+        });
+    }
+
+    // Driver API methods
+    async getDrivers() {
+        return this.request(API_CONFIG.ENDPOINTS.DRIVERS);
+    }
+
+    async createDriver(data) {
+        return this.request(API_CONFIG.ENDPOINTS.DRIVERS, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    async updateDriver(id, data) {
+        return this.request(`${API_CONFIG.ENDPOINTS.DRIVERS}/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    }
+
+    async deleteDriver(id) {
+        return this.request(`${API_CONFIG.ENDPOINTS.DRIVERS}/${id}`, {
+            method: 'DELETE'
+        });
+    }
+
+    // Emergency API methods
+    async createEmergency(data) {
+        return this.request(API_CONFIG.ENDPOINTS.EMERGENCIES, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    async getEmergencies() {
+        return this.request(API_CONFIG.ENDPOINTS.EMERGENCIES);
+    }
+
+    async dispatchEmergency(emergencyId, ambulanceId) {
+        return this.request(API_CONFIG.ENDPOINTS.DISPATCH, {
+            method: 'POST',
+            body: JSON.stringify({ emergencyId, ambulanceId })
+        });
+    }
+}
+
+// Global instances
+window.navigationManager = new NavigationManager();
+window.apiManager = new APIManager();
+
 // Global Variables
 let map;
 let ambulanceMarkers = [];
@@ -89,7 +319,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Enhanced Smooth Scrolling with easing
+// Enhanced Smooth Scrolling with easing and page navigation
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();

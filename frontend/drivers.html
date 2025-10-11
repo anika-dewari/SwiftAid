@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Management - SwiftAid</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/driver-management.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-ambulance"></i>
+                <span>SwiftAid</span>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="ambulances.html" class="nav-link">Ambulances</a>
+                </li>
+                <li class="nav-item">
+                    <a href="hospitals.html" class="nav-link">Hospitals</a>
+                </li>
+                <li class="nav-item">
+                    <a href="drivers.html" class="nav-link active">Drivers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="emergency-portal.html" class="nav-cta">Emergency Portal</a>
+                </li>
+            </ul>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1><i class="fas fa-id-card"></i> Driver Management</h1>
+                    <p>Manage ambulance drivers and their assignments</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="add-driver-btn">
+                        <i class="fas fa-plus"></i>
+                        Add Driver
+                    </button>
+                    <button class="btn btn-outline" id="refresh-data">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Cards -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon available">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="available-drivers">0</div>
+                        <div class="stat-label">Available</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon on-duty">
+                        <i class="fas fa-steering-wheel"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="on-duty-drivers">0</div>
+                        <div class="stat-label">On Duty</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon off-duty">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="off-duty-drivers">0</div>
+                        <div class="stat-label">Off Duty</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="total-drivers">0</div>
+                        <div class="stat-label">Total Drivers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="main-content">
+        <div class="container">
+            <div class="section-header">
+                <h2>Driver Directory</h2>
+                <div class="filters">
+                    <select id="status-filter">
+                        <option value="">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="on-duty">On Duty</option>
+                        <option value="off-duty">Off Duty</option>
+                    </select>
+                    <select id="shift-filter">
+                        <option value="">All Shifts</option>
+                        <option value="day">Day Shift</option>
+                        <option value="night">Night Shift</option>
+                        <option value="rotating">Rotating</option>
+                    </select>
+                    <input type="text" id="search-input" placeholder="Search drivers...">
+                </div>
+            </div>
+            
+            <div class="drivers-container">
+                <div class="driver-grid" id="driver-grid">
+                    <!-- Driver cards will be populated here -->
+                </div>
+                
+                <div class="loading-state" id="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading drivers...</p>
+                </div>
+                
+                <div class="empty-state" id="empty-state" style="display: none;">
+                    <i class="fas fa-id-card"></i>
+                    <h3>No Drivers Found</h3>
+                    <p>Add your first driver to get started</p>
+                    <button class="btn btn-primary" onclick="showAddDriverModal()">
+                        <i class="fas fa-plus"></i>
+                        Add Driver
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add/Edit Driver Modal -->
+    <div class="modal-overlay" id="driver-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Driver</h3>
+                <button class="close-btn" onclick="closeDriverModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="modal-form" id="driver-form">
+                <div class="form-section">
+                    <h4>Personal Information</h4>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="first-name">First Name *</label>
+                            <input type="text" id="first-name" name="firstName" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="last-name">Last Name *</label>
+                            <input type="text" id="last-name" name="lastName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="employee-id">Employee ID *</label>
+                            <input type="text" id="employee-id" name="employeeId" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="date-of-birth">Date of Birth</label>
+                            <input type="date" id="date-of-birth" name="dateOfBirth">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email">
+                        </div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" rows="2"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>License & Certification</h4>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="license-number">License Number *</label>
+                            <input type="text" id="license-number" name="licenseNumber" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="license-expiry">License Expiry *</label>
+                            <input type="date" id="license-expiry" name="licenseExpiry" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="license-type">License Type *</label>
+                            <select id="license-type" name="licenseType" required>
+                                <option value="">Select License Type</option>
+                                <option value="light">Light Motor Vehicle (LMV)</option>
+                                <option value="heavy">Heavy Motor Vehicle (HMV)</option>
+                                <option value="commercial">Commercial Vehicle</option>
+                                <option value="emergency">Emergency Vehicle</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="medical-certificate">Medical Certificate Valid Until</label>
+                            <input type="date" id="medical-certificate" name="medicalCertificate">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>Employment Details</h4>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="join-date">Join Date *</label>
+                            <input type="date" id="join-date" name="joinDate" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="shift">Shift *</label>
+                            <select id="shift" name="shift" required>
+                                <option value="">Select Shift</option>
+                                <option value="day">Day Shift (6 AM - 6 PM)</option>
+                                <option value="night">Night Shift (6 PM - 6 AM)</option>
+                                <option value="rotating">Rotating Shift</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="status">Status *</label>
+                            <select id="status" name="status" required>
+                                <option value="available">Available</option>
+                                <option value="on-duty">On Duty</option>
+                                <option value="off-duty">Off Duty</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="assigned-ambulance">Assigned Ambulance</label>
+                            <select id="assigned-ambulance" name="assignedAmbulance">
+                                <option value="">Select Ambulance</option>
+                                <!-- Ambulance options will be populated -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="experience">Experience (Years)</label>
+                        <input type="number" id="experience" name="experience" min="0" step="0.5">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>Emergency Contact</h4>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="emergency-contact-name">Contact Name</label>
+                            <input type="text" id="emergency-contact-name" name="emergencyContactName">
+                        </div>
+                        <div class="form-field">
+                            <label for="emergency-contact-relation">Relation</label>
+                            <input type="text" id="emergency-contact-relation" name="emergencyContactRelation" placeholder="e.g., Spouse, Parent">
+                        </div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="emergency-contact-phone">Emergency Contact Phone</label>
+                        <input type="tel" id="emergency-contact-phone" name="emergencyContactPhone">
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeDriverModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Driver
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Driver Details Modal -->
+    <div class="modal-overlay" id="details-modal">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3>Driver Details</h3>
+                <button class="close-btn" onclick="closeDetailsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="driver-details" id="driver-details">
+                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    <script src="js/driver-management.js"></script>
+</body>
+</html>

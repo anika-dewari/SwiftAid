@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Portal - SwiftAid</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/emergency-portal.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-ambulance"></i>
+                <span>SwiftAid</span>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="ambulances.html" class="nav-link">Ambulances</a>
+                </li>
+                <li class="nav-item">
+                    <a href="hospitals.html" class="nav-link">Hospitals</a>
+                </li>
+                <li class="nav-item">
+                    <a href="drivers.html" class="nav-link">Drivers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="emergency-portal.html" class="nav-cta active">Emergency Portal</a>
+                </li>
+            </ul>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Emergency Portal Hero -->
+    <section class="emergency-hero">
+        <div class="container">
+            <div class="emergency-header">
+                <div class="emergency-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h1>Emergency Request Portal</h1>
+                <p>Submit emergency requests quickly and efficiently. Our system will automatically dispatch the nearest available ambulance.</p>
+                <div class="emergency-stats">
+                    <div class="stat">
+                        <span class="stat-number">3.8min</span>
+                        <span class="stat-label">Avg Response</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Available</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">99%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Form Section -->
+    <section class="emergency-form-section">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Submit Emergency Request</h2>
+                    <p>Please provide as much detail as possible to ensure the fastest response</p>
+                </div>
+                
+                <form class="emergency-form" id="emergency-form">
+                    <!-- Patient Information -->
+                    <div class="form-group">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user"></i>
+                            Patient Information
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="patient-name">Patient Name *</label>
+                                <input type="text" id="patient-name" name="patientName" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="patient-age">Age *</label>
+                                <input type="number" id="patient-age" name="patientAge" min="0" max="150" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="patient-gender">Gender</label>
+                                <select id="patient-gender" name="patientGender">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="patient-phone">Contact Number *</label>
+                                <input type="tel" id="patient-phone" name="patientPhone" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Details -->
+                    <div class="form-group">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Emergency Details
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="emergency-type">Emergency Type *</label>
+                                <select id="emergency-type" name="emergencyType" required>
+                                    <option value="">Select Emergency Type</option>
+                                    <option value="cardiac">Cardiac Emergency</option>
+                                    <option value="trauma">Trauma/Accident</option>
+                                    <option value="respiratory">Respiratory Emergency</option>
+                                    <option value="neurological">Neurological Emergency</option>
+                                    <option value="poisoning">Poisoning</option>
+                                    <option value="burns">Burns</option>
+                                    <option value="psychiatric">Psychiatric Emergency</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="severity">Severity Level *</label>
+                                <select id="severity" name="severity" required>
+                                    <option value="">Select Severity</option>
+                                    <option value="critical">Critical - Life Threatening</option>
+                                    <option value="urgent">Urgent - Serious Condition</option>
+                                    <option value="moderate">Moderate - Stable but Needs Care</option>
+                                    <option value="low">Low - Non-Emergency</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="symptoms">Symptoms/Description *</label>
+                            <textarea id="symptoms" name="symptoms" rows="4" placeholder="Describe the symptoms or situation in detail..." required></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Location Information -->
+                    <div class="form-group">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Location Information
+                        </h3>
+                        <div class="form-field">
+                            <label for="address">Full Address *</label>
+                            <textarea id="address" name="address" rows="2" placeholder="Enter the complete address with landmarks..." required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="city">City *</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="pincode">Pin Code *</label>
+                                <input type="text" id="pincode" name="pincode" pattern="[0-9]{6}" required>
+                            </div>
+                        </div>
+                        <div class="location-actions">
+                            <button type="button" class="btn btn-outline" id="get-location">
+                                <i class="fas fa-crosshairs"></i>
+                                Use Current Location
+                            </button>
+                            <span class="location-status" id="location-status"></span>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="form-group">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Additional Information
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="caller-name">Caller Name *</label>
+                                <input type="text" id="caller-name" name="callerName" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="caller-relation">Relation to Patient</label>
+                                <select id="caller-relation" name="callerRelation">
+                                    <option value="">Select Relation</option>
+                                    <option value="self">Self</option>
+                                    <option value="family">Family Member</option>
+                                    <option value="friend">Friend</option>
+                                    <option value="witness">Witness</option>
+                                    <option value="healthcare">Healthcare Provider</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="special-instructions">Special Instructions</label>
+                            <textarea id="special-instructions" name="specialInstructions" rows="3" placeholder="Any special instructions for the ambulance crew (e.g., accessibility needs, specific entrance, etc.)"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="clear-form">
+                            <i class="fas fa-times"></i>
+                            Clear Form
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Emergency Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Status Section -->
+    <section class="emergency-status-section" id="status-section" style="display: none;">
+        <div class="container">
+            <div class="status-container">
+                <div class="status-header">
+                    <div class="status-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2>Emergency Request Submitted</h2>
+                    <p>Your request has been received and is being processed</p>
+                </div>
+                
+                <div class="request-details" id="request-details">
+                    <!-- Request details will be populated here -->
+                </div>
+                
+                <div class="tracking-info">
+                    <h3>Track Your Request</h3>
+                    <div class="request-id">
+                        <label>Request ID:</label>
+                        <span id="tracking-id">ER-2025-001234</span>
+                        <button class="copy-btn" onclick="copyRequestId()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p class="tracking-note">Save this ID to track your emergency request status</p>
+                </div>
+                
+                <div class="status-actions">
+                    <button class="btn btn-primary" onclick="location.reload()">
+                        <i class="fas fa-plus"></i>
+                        Submit Another Request
+                    </button>
+                    <a href="index.html" class="btn btn-outline">
+                        <i class="fas fa-home"></i>
+                        Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Emergency Contact Info -->
+    <section class="emergency-contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <h3>Emergency Hotline</h3>
+                    <p>108 / 102</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email Support</h3>
+                    <p>emergency@swiftaid.com</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <h3>Response Time</h3>
+                    <p>Average 3.8 minutes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    <script src="js/emergency-portal.js"></script>
+</body>
+</html>

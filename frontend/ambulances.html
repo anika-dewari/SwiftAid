@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambulance Management - SwiftAid</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/ambulance-management.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-ambulance"></i>
+                <span>SwiftAid</span>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="ambulances.html" class="nav-link active">Ambulances</a>
+                </li>
+                <li class="nav-item">
+                    <a href="hospitals.html" class="nav-link">Hospitals</a>
+                </li>
+                <li class="nav-item">
+                    <a href="drivers.html" class="nav-link">Drivers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="emergency-portal.html" class="nav-cta">Emergency Portal</a>
+                </li>
+            </ul>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1><i class="fas fa-ambulance"></i> Ambulance Management</h1>
+                    <p>Monitor and manage ambulance fleet in real-time</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="add-ambulance-btn">
+                        <i class="fas fa-plus"></i>
+                        Add Ambulance
+                    </button>
+                    <button class="btn btn-outline" id="refresh-data">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Cards -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon available">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="available-count">0</div>
+                        <div class="stat-label">Available</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon busy">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="busy-count">0</div>
+                        <div class="stat-label">On Route</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon maintenance">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="maintenance-count">0</div>
+                        <div class="stat-label">Maintenance</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="total-count">0</div>
+                        <div class="stat-label">Total Fleet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="main-content">
+        <div class="container">
+            <div class="content-layout">
+                <!-- Ambulance List -->
+                <div class="ambulance-list-section">
+                    <div class="section-header">
+                        <h2>Ambulance Fleet</h2>
+                        <div class="filters">
+                            <select id="status-filter">
+                                <option value="">All Status</option>
+                                <option value="available">Available</option>
+                                <option value="busy">On Route</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                            <input type="text" id="search-input" placeholder="Search ambulances...">
+                        </div>
+                    </div>
+                    
+                    <div class="ambulance-grid" id="ambulance-grid">
+                        <!-- Ambulance cards will be populated here -->
+                    </div>
+                    
+                    <div class="loading-state" id="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading ambulances...</p>
+                    </div>
+                    
+                    <div class="empty-state" id="empty-state" style="display: none;">
+                        <i class="fas fa-ambulance"></i>
+                        <h3>No Ambulances Found</h3>
+                        <p>Add your first ambulance to get started</p>
+                        <button class="btn btn-primary" onclick="showAddAmbulanceModal()">
+                            <i class="fas fa-plus"></i>
+                            Add Ambulance
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Map View -->
+                <div class="map-section">
+                    <div class="map-header">
+                        <h3>Real-time Location</h3>
+                        <div class="map-controls">
+                            <button class="map-btn active" data-layer="all">All</button>
+                            <button class="map-btn" data-layer="available">Available</button>
+                            <button class="map-btn" data-layer="busy">Busy</button>
+                        </div>
+                    </div>
+                    <div id="ambulance-map"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add/Edit Ambulance Modal -->
+    <div class="modal-overlay" id="ambulance-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Ambulance</h3>
+                <button class="close-btn" onclick="closeAmbulanceModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="modal-form" id="ambulance-form">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="ambulance-id">Ambulance ID *</label>
+                        <input type="text" id="ambulance-id" name="ambulanceId" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="license-plate">License Plate *</label>
+                        <input type="text" id="license-plate" name="licensePlate" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="ambulance-type">Type *</label>
+                        <select id="ambulance-type" name="type" required>
+                            <option value="">Select Type</option>
+                            <option value="basic">Basic Life Support (BLS)</option>
+                            <option value="advanced">Advanced Life Support (ALS)</option>
+                            <option value="critical">Critical Care Transport</option>
+                            <option value="neonatal">Neonatal Transport</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="status">Status *</label>
+                        <select id="status" name="status" required>
+                            <option value="available">Available</option>
+                            <option value="busy">On Route</option>
+                            <option value="maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="assigned-driver">Assigned Driver</label>
+                        <select id="assigned-driver" name="assignedDriver">
+                            <option value="">Select Driver</option>
+                            <!-- Driver options will be populated -->
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="station">Base Station</label>
+                        <input type="text" id="station" name="station" placeholder="e.g., Central Station">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="latitude">Latitude</label>
+                        <input type="number" id="latitude" name="latitude" step="any" placeholder="e.g., 28.7041">
+                    </div>
+                    <div class="form-field">
+                        <label for="longitude">Longitude</label>
+                        <input type="number" id="longitude" name="longitude" step="any" placeholder="e.g., 77.1025">
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="equipment">Equipment/Features</label>
+                    <textarea id="equipment" name="equipment" rows="3" placeholder="List available medical equipment and features..."></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeAmbulanceModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Ambulance
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ambulance Details Modal -->
+    <div class="modal-overlay" id="details-modal">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3>Ambulance Details</h3>
+                <button class="close-btn" onclick="closeDetailsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="ambulance-details" id="ambulance-details">
+                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/ambulance-management.js"></script>
+</body>
+</html>

@@ -1546,6 +1546,193 @@ p {
     border: 1px solid rgba(230, 57, 70, 0.3);
 }
 
+/* Quick Actions Section */
+.quick-actions-section {
+  margin-top: var(--space-12);
+}
+
+.quick-actions-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  opacity: 0;
+  transition: var(--transition-smooth);
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.action-btn:hover::before {
+  opacity: 1;
+}
+
+.action-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.action-btn.emergency {
+  border-color: rgba(230, 57, 70, 0.3);
+  background: linear-gradient(135deg, rgba(230, 57, 70, 0.05) 0%, white 100%);
+}
+
+.action-btn.emergency:hover {
+  border-color: var(--secondary-color);
+  box-shadow: 0 8px 25px rgba(230, 57, 70, 0.15);
+}
+
+.action-btn.ambulance {
+  border-color: rgba(0, 180, 216, 0.3);
+  background: linear-gradient(135deg, rgba(0, 180, 216, 0.05) 0%, white 100%);
+}
+
+.action-btn.ambulance:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 8px 25px rgba(0, 180, 216, 0.15);
+}
+
+.action-btn.hospital {
+  border-color: rgba(30, 58, 138, 0.3);
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.05) 0%, white 100%);
+}
+
+.action-btn.hospital:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15);
+}
+
+.action-btn.driver {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, white 100%);
+}
+
+.action-btn.driver:hover {
+  border-color: var(--success);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+}
+
+.action-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn.emergency .action-icon {
+  background: linear-gradient(135deg, rgba(230, 57, 70, 0.1) 0%, rgba(230, 57, 70, 0.05) 100%);
+  color: var(--secondary-color);
+}
+
+.action-btn.ambulance .action-icon {
+  background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(0, 180, 216, 0.05) 100%);
+  color: var(--accent-color);
+}
+
+.action-btn.hospital .action-icon {
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.1) 0%, rgba(30, 58, 138, 0.05) 100%);
+  color: var(--primary-color);
+}
+
+.action-btn.driver .action-icon {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+  color: var(--success);
+}
+
+.action-btn:hover .action-icon {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+.action-content {
+  flex: 1;
+}
+
+.action-content h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1.4;
+}
+
+.action-content p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive Quick Actions */
+@media (max-width: 768px) {
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  
+  .action-btn {
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+  
+  .action-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  
+  .action-content h4 {
+    font-size: 1rem;
+  }
+  
+  .action-content p {
+    font-size: 0.8rem;
+  }
+}
+
 /* Map Section */
 .map-section {
   padding: var(--section-padding-y) 0;
