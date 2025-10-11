@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftAid - Smart Emergency Dispatch System</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-container">
+            <div class="loading-logo">
+                <i class="fas fa-ambulance"></i>
+                <h2>SwiftAid</h2>
+            </div>
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Initializing Emergency Dispatch System...</p>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-ambulance"></i>
+                <span>SwiftAid</span>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link active">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#dashboard" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#ambulances" class="nav-link">Map</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#hospitals" class="nav-link">Hospitals</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#analytics" class="nav-link">Analytics</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-cta">Emergency Portal</a>
+                </li>
+            </ul>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content" data-aos="fade-up">
+                <h1 class="hero-title">Smart Emergency Dispatch & Resource Allocation</h1>
+                <p class="hero-subtitle">Reducing response times by 25% through intelligent ambulance dispatch and optimal hospital selection powered by advanced data analytics</p>
+                <div class="hero-buttons">
+                    <a href="#dashboard" class="btn-primary">
+                        <i class="fas fa-chart-line"></i>
+                        Live Dashboard
+                    </a>
+                    <button class="btn-secondary">
+                        <i class="fas fa-play"></i>
+                        Watch Demo
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">24/7</span>
+                        <span class="hero-stat-label">Monitoring</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">3.8min</span>
+                        <span class="hero-stat-label">Avg Response</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">99.7%</span>
+                        <span class="hero-stat-label">Uptime</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual" data-aos="fade-left">
+                <div class="ambulance-icon">
+                    <i class="fas fa-ambulance"></i>
+                </div>
+                <div class="pulse-rings">
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Statistics -->
+    <section class="dashboard" id="dashboard">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Real-Time System Status</h2>
+            <div class="stats-grid">
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="100" tabindex="0">
+                    <div class="stat-icon ambulance-available">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-header">
+                            <p class="stat-label">Ambulances Available</p>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +2
+                            </div>
+                        </div>
+                        <div class="stat-number" id="ambulances-available">24</div>
+                        <div class="stat-meta">
+                            <span class="stat-status online">Online</span>
+                            <canvas class="stat-sparkline" width="60" height="20"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="200" tabindex="0">
+                    <div class="stat-icon hospital-online">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-header">
+                            <p class="stat-label">Hospitals Online</p>
+                            <div class="stat-change neutral">
+                                <i class="fas fa-minus"></i>
+                                0
+                            </div>
+                        </div>
+                        <div class="stat-number" id="hospitals-online">12</div>
+                        <div class="stat-meta">
+                            <span class="stat-status online">Active</span>
+                            <canvas class="stat-sparkline" width="60" height="20"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="300" tabindex="0">
+                    <div class="stat-icon response-time">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-header">
+                            <p class="stat-label">Avg Response Time (min)</p>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-down"></i>
+                                -0.3
+                            </div>
+                        </div>
+                        <div class="stat-number" id="avg-response-time">4.2</div>
+                        <div class="stat-meta">
+                            <span class="stat-status online">Optimal</span>
+                            <canvas class="stat-sparkline" width="60" height="20"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="400" tabindex="0">
+                    <div class="stat-icon emergency-requests">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-header">
+                            <p class="stat-label">Active Emergency Requests</p>
+                            <div class="stat-change negative">
+                                <i class="fas fa-arrow-up"></i>
+                                +3
+                            </div>
+                        </div>
+                        <div class="stat-number" id="emergency-requests">7</div>
+                        <div class="stat-meta">
+                            <span class="stat-status critical">Priority</span>
+                            <canvas class="stat-sparkline" width="60" height="20"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Map Section -->
+    <section class="map-section" id="ambulances">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Live Emergency Response Map</h2>
+            <div class="map-container" data-aos="fade-up" data-aos-delay="200">
+                <div id="emergency-map"></div>
+                <div class="map-controls">
+                    <button class="map-btn active" data-filter="all">
+                        <i class="fas fa-globe"></i>
+                        All Units
+                    </button>
+                    <button class="map-btn" data-filter="ambulances">
+                        <i class="fas fa-ambulance"></i>
+                        Ambulances
+                    </button>
+                    <button class="map-btn" data-filter="hospitals">
+                        <i class="fas fa-hospital"></i>
+                        Hospitals
+                    </button>
+                    <button class="map-btn" data-filter="emergencies">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Emergencies
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analytics Charts -->
+    <section class="analytics" id="analytics">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Performance Analytics</h2>
+            <div class="analytics-grid">
+                <div class="chart-container" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="chart-title">Response Time Trends</h3>
+                    <canvas id="responseChart"></canvas>
+                </div>
+                <div class="chart-container" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="chart-title">Emergency Request Volume</h3>
+                    <canvas id="volumeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="hospitals">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Routing</h3>
+                    <p class="feature-description">AI-powered optimal path calculation considering real-time traffic, road conditions, and emergency priority levels</p>
+                </div>
+                
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">Intelligent Dispatch</h3>
+                    <p class="feature-description">Machine learning algorithms match ambulances with optimal hospitals based on capacity, specialties, and patient needs</p>
+                </div>
+                
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3 class="feature-title">Real-Time Monitoring</h3>
+                    <p class="feature-description">Continuous tracking of ambulance locations, hospital bed availability, and emergency response metrics</p>
+                </div>
+                
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="feature-title">Performance Analytics</h3>
+                    <p class="feature-description">Comprehensive reporting and analytics to optimize system performance and improve emergency response strategies</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Simulation Section -->
+    <section class="emergency-simulation" id="simulation">
+        <div class="container">
+            <div class="simulation-content" data-aos="fade-up">
+                <h2 class="section-title">Experience SwiftAid in Action</h2>
+                <p class="lead">See how our intelligent dispatch system handles emergency scenarios in real-time</p>
+                
+                <div class="simulation-controls">
+                    <button class="btn btn-primary btn-large" id="simulate-emergency">
+                        <i class="fas fa-play"></i>
+                        Start Emergency Simulation
+                    </button>
+                    <button class="btn btn-outline" id="reset-simulation">
+                        <i class="fas fa-refresh"></i>
+                        Reset System
+                    </button>
+                </div>
+                
+                <div class="simulation-status" id="simulation-status">
+                    <div class="status-indicator">
+                        <span class="status-dot online"></span>
+                        <span class="status-text">System Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-ambulance"></i>
+                        <span>SwiftAid</span>
+                    </div>
+                    <p class="footer-description">Smart Emergency Dispatch System designed to save lives through intelligent resource allocation and real-time optimization.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Contact Team</h3>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <strong>Anika Dewari</strong> - Team Lead
+                            <br>anikadewari26@gmail.com
+                        </div>
+                        <div class="contact-item">
+                            <strong>Ayush Negi</strong> - Developer
+                            <br>anegi52005@gmail.com
+                        </div>
+                        <div class="contact-item">
+                            <strong>Ritika Bisht</strong> - Developer
+                            <br>bisht.ritika19200@gmail.com
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Quick Contact</h3>
+                    <form class="contact-form">
+                        <input type="text" placeholder="Your Name" class="form-input">
+                        <input type="email" placeholder="Your Email" class="form-input">
+                        <textarea placeholder="Your Message" class="form-textarea"></textarea>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 SwiftAid Emergency Dispatch System. Academic Project - Ananta University</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container">
+        <!-- Toasts will be dynamically inserted here -->
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>
