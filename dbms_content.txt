@@ -1,0 +1,133 @@
+# DBMS Content
+# Please paste the content from your PDF file here
+
+# You can copy and paste sections of the PDF content below:
+PROJECT AND TEAM INFORMATION
+Project Title
+(Try to choose a catchy title. Max 20 words).
+SwiftAid: Smart Emergency Dispatch & Resource Allocation System
+Student / Team Information
+Team Name: Team member 1 (Team Lead)
+(Anika, Dewari, 2318357, 23012393, anikadewari26@gmail.com)
+Team member 2
+(Ayush, Negi, 2318598, 23011335,anegi52005@gmail.com)
+Team member 3
+(Ritika, Bisht, 2319422, 230121240 , bisht.ritika19200@gmail.com)
+PROJECT PROPOSAL
+Ananta
+Page 1
+PROJECT PROPOSAL
+PROPOSAL DESCRIPTION (10 pts)
+Motivation (1 pt)
+(Describe the problem you want to solve and why it is important. Max 300 words).
+Emergency medical services face critical challenges in ambulance allocation and hospital selection, leading to
+delayed response times that can be life-threatening. Current dispatch systems often rely on manual decision-making
+or simplistic algorithms that don't consider real-time factors like ambulance availability, hospital bed capacity,
+traffic conditions, or patient-specific medical requirements.
+Studies show that every minute of delay in emergency response can significantly impact patient survival rates,
+particularly for cardiac arrests and trauma cases.
+Our project addresses this critical gap by developing an intelligent database management system that optimizes
+ambulance dispatch decisions in real-time. The system will automatically identify the nearest available ambulance
+with appropriate medical equipment, match it with the most suitable hospital based on bed availability and medical
+specialties, and provide optimal routing. This solution aims to reduce average response times by 15-25% and
+improve resource utilization across the emergency medical network, ultimately saving more lives through data-
+driven decision making.
+State of the Art / Current solution (1 pt)
+(Describe how the problem is solved today (if it is). Max 200 words).
+Currently, most emergency dispatch centers use basic Computer-Aided Dispatch (CAD) systems that primarily
+manage call logging and basic unit tracking. These systems typically assign ambulances based on simple proximity
+algorithms without considering dynamic factors like hospital capacity, ambulance equipment types, or real-time
+traffic conditions. Dispatchers often make decisions based on their experience and limited information, leading to
+suboptimal resource allocation.
+Some advanced metropolitan areas use GPS tracking and basic optimization, but these systems lack integrated
+hospital management, predictive analytics, and intelligent matching algorithms. Many smaller regions still rely on
+paper-based logs or simple radio communication systems. The existing solutions fail to address the critical need for
+real-time, multi-factor optimization that considers patient condition, ambulance capabilities, hospital
+specializations, and current capacity simultaneously, resulting in inefficient resource utilization and longer patient
+wait times.
+Project Goals and Milestones (2 pts)
+(Describe the project general goals. Include initial milestones as well any other milestones. Max 300 words).
+Primary Goal: Develop a comprehensive DBMS that reduces emergency response times through intelligent
+ambulance dispatch and optimal hospital selection.
+Key Objectives:
+• Design and implement a normalized database schema supporting concurrent operations.
+• Create spatial query algorithms for proximity-based ambulance selection.
+• Develop real-time resource tracking and availability management.
+• Implement intelligent hospital matching based on bed capacity and medical specialties.
+• Build user-friendly interfaces for dispatchers, drivers, and administrators.
+Project Milestones:
+Page 2
+PROJECT PROPOSAL
+1. Week 2: Complete database design and schema creation with sample data.
+2. Week 4: Implement core CRUD operations and basic dispatch functionality.
+3. Week 5: Develop advanced spatial queries and optimization algorithms.
+4. Week 6: Create user interfaces and integrate real-time tracking features.
+5. Week 8: Complete system testing, performance optimization, and documentation.
+6. Week 10: Final system integration, user acceptance testing, and project presentation.
+Each milestone includes specific deliverables, testing requirements, and documentation updates to ensure
+systematic progress toward the final goal.
+Project Approach (3 pts)
+(Describe how you plan to articulate and design a solution. Including platforms and technologies that you will use. Max
+300 words).
+Our approach follows a structured database-first methodology with iterative development cycles. We'll begin with
+comprehensive requirements analysis and Entity-Relationship modeling to ensure proper database normalization and
+efficient query performance. The core database will be implemented using MySQL/PostgreSQL for robust transaction
+management and spatial query support.
+Technology Stack:
+• Database: MySQL 8.0 with spatial extensions for geographic calculations.
+• Backend: Python Flask/Django for RESTful API development and business logic.
+• Frontend: React.js with Tailwind CSS for interactive mapping and real-time dashboards.
+• Real-time Communication: WebSocket integration for live status updates.
+• Testing: PyTest for unit testing, JMeter for performance testing.
+System Architecture (High Level Diagram)(2 pts)
+(Provide an overview of the system, identifying its main components and interfaces in the form of a diagram using a tool
+of your choice).
+Page 3
+PROJECT PROPOSAL
+Project Outcome / Deliverables (1 pts)
+(Describe what are the outcomes / deliverables of the project. Max 200 words).
+Page 4
+PROJECT PROPOSAL
+Technical Deliverables:
+1. Complete Database System: Fully normalized MySQL database with optimized schemas for ambulances,
+hospitals, drivers, emergency requests, and dispatch records.
+2. 3. 4. 5. Web-based Dashboard: Interactive dispatch interface with real-time maps, status tracking, and analytics.
+Mobile Application: Driver interface for status updates and navigation.
+API Documentation: Comprehensive REST API documentation with endpoint specifications.
+Performance Reports: System benchmarking results showing query optimization and concurrent user
+handling.
+Academic Deliverables:
+• Technical Documentation: Database design rationale, ER diagrams, normalization analysis.
+• Source Code Repository: Well-commented, version-controlled codebase with installation guides.
+• Project Presentation: Live demonstration of core features including real-time dispatch simulation.
+• Performance Analysis: Detailed report on system scalability, query optimization strategies, and concurrency
+handling mechanisms.
+Assumptions
+( Describe the assumptions ( if any ) you are making to solve the problem. Max 100 words )
+We assume access to simulated GPS data for ambulance tracking since real vehicle integration isn't feasible in an
+academic environment. Hospital bed availability will be simulated with realistic update patterns. The system assumes
+reliable internet connectivity for real-time operations. We'll use synthetic emergency call data based on statistical
+patterns rather than real emergency calls for testing purposes. The project assumes a metropolitan area of
+approximately 100 square kilometers with 10-15 hospitals and 20-30 ambulances for realistic scalability testing while
+maintaining manageable complexity for academic demonstration.
+References
+(Provide a list of resources or references you utilised for the completion of this deliverable. You may provide links).
+1. Emergency Medical Services Performance Metrics:
+• https://www.ems.gov/pdf/National_EMS_Scope_of_Practice_Model.pdf
+• Emergency Response Time Standards (NFPA 1710)
+2. Database Design and Spatial Queries:
+• "Database System Concepts" by Silberschatz, Galvin, and Gagne
+• MySQL Spatial Data Types Documentation: https://dev.mysql.com/doc/refman/8.0/en/spatial-
+types.html
+3. Ambulance Dispatch Optimization Research:
+• "Ambulance Location and Relocation Problems with Time-dependent Travel Times" (European
+Journal of Operational Research)
+• "Real-time Ambulance Dispatching and Repositioning" (Manufacturing & Service Operations
+Management)
+4. Technology References:
+• Flask Web Framework Documentation: https://flask.palletsprojects.com/
+• React.js Official Documentation: https://reactjs.org/docs/
+• Leaflet.js Mapping Library: https://leafletjs.com/reference.html
+5. Geographic Information Systems:
+• PostGIS Spatial Database: https://postgis.net/documentation/
+Page 5
