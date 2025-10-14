@@ -2707,6 +2707,12 @@ body {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
+.dark\:from-green-950\/20:is(.dark *){
+  --tw-gradient-from: rgb(5 46 22 / 0.2) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(5 46 22 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
 .dark\:via-blue-900\/20:is(.dark *){
   --tw-gradient-to: rgb(30 58 138 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), rgb(30 58 138 / 0.2) var(--tw-gradient-via-position), var(--tw-gradient-to);
@@ -2762,6 +2768,10 @@ body {
 
 .dark\:to-purple-950\/20:is(.dark *){
   --tw-gradient-to: rgb(59 7 100 / 0.2) var(--tw-gradient-to-position);
+}
+
+.dark\:to-blue-950\/20:is(.dark *){
+  --tw-gradient-to: rgb(23 37 84 / 0.2) var(--tw-gradient-to-position);
 }
 
 .dark\:text-amber-200:is(.dark *){

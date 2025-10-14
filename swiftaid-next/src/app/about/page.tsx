@@ -8,6 +8,7 @@ import { GradientText } from "@/components/ui/gradient-text";
 import { FloatingCard } from "@/components/ui/floating-card";
 import { AnimatedTextGenerate } from "@/components/ui/animated-textgenerate";
 import BackgroundMeteors from "@/components/ui/backgroundmeteors";
+import { Announcement, AnnouncementTag, AnnouncementTitle } from "@/components/ui/announcement";
 import { ModeToggle } from "@/components/mode-toggle";
 import {
   Heart,
@@ -25,6 +26,7 @@ import {
   MapPin,
   Linkedin,
   Twitter,
+  ArrowUpRight,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -204,6 +206,21 @@ export default function AboutUs() {
           </motion.div>
         </div>
       </BackgroundMeteors>
+
+      {/* Achievement Announcement */}
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 py-4">
+        <div className="container mx-auto px-4">
+          <Announcement variant="success" movingBorder>
+            <AnnouncementTag variant="success" lustre>
+              MILESTONE ACHIEVED
+            </AnnouncementTag>
+            <AnnouncementTitle>
+              50,000+ lives saved through SwiftAid emergency response system
+              <Award className="shrink-0 text-green-500" size={16} />
+            </AnnouncementTitle>
+          </Announcement>
+        </div>
+      </div>
 
       <div className="container mx-auto p-6 space-y-16">
         {/* Hero Section with Animated Text */}
