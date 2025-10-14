@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardAction, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import {
   Activity,
@@ -19,6 +20,8 @@ import {
 import Link from "next/link";
 
 export default function Dashboard() {
+  const { toast } = useToast();
+  
   const emergencyStats = [
     { 
       title: "Active Emergencies", 
@@ -286,6 +289,146 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+        </motion.div>
+
+        {/* Enhanced Cards Section - Active Incidents */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="mt-8"
+        >
+          <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
+            Active Emergency Incidents
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                id: "EMG-2024-001",
+                title: "Cardiac Emergency - Downtown",
+                description: "Male, 45, chest pain and shortness of breath. Ambulance dispatched.",
+                priority: "Critical",
+                eta: "4 min",
+                location: "123 Main St, Downtown",
+                ambulanceId: "AMB-007",
+                rating: 4.9,
+                driver: "Sarah Johnson"
+              },
+              {
+                id: "EMG-2024-002", 
+                title: "Vehicle Accident - Highway 101",
+                description: "Multi-vehicle collision with possible injuries. Emergency response en route.",
+                priority: "High",
+                eta: "7 min",
+                location: "Highway 101, Mile 15",
+                ambulanceId: "AMB-003", 
+                rating: 4.8,
+                driver: "Michael Rodriguez"
+              },
+              {
+                id: "EMG-2024-003",
+                title: "Fall Injury - Senior Center", 
+                description: "Elderly patient with suspected hip fracture. Stable condition.",
+                priority: "Moderate",
+                eta: "12 min",
+                location: "Golden Years Center",
+                ambulanceId: "AMB-011",
+                rating: 4.7,
+                driver: "Emily Watson"
+              }
+            ].map((incident) => {
+              const handleAddToWatchlist = () => {
+                toast(`${incident.title} added to watchlist!`, { 
+                  duration: 2000,
+                  type: "success"
+                });
+              };
+
+              const getPriorityColor = (priority: string) => {
+                switch (priority) {
+                  case "Critical": return "bg-red-500";
+                  case "High": return "bg-orange-500";
+                  case "Moderate": return "bg-yellow-500";
+                  default: return "bg-gray-500";
+                }
+              };
+
+              return (
+                <Card key={incident.id} className="w-full hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader className="flex flex-col gap-1 px-4 py-2">
+                    <div className="flex items-start w-full">
+                      <CardTitle className="text-lg font-semibold">
+                        {incident.title}
+                      </CardTitle>
+                      <CardAction className="ml-auto">
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="p-0 hover:underline text-blue-600"
+                          onClick={handleAddToWatchlist}
+                        >
+                          Add to Watchlist
+                        </Button>
+                      </CardAction>
+                    </div>
+                    <CardDescription className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {incident.description}
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent className="pt-0 flex flex-col gap-3 px-4">
+                    {/* Priority Badge */}
+                    <div className="flex items-center gap-2">
+                      <div className={`px-2 py-1 rounded-full text-white text-xs font-medium ${getPriorityColor(incident.priority)}`}>
+                        {incident.priority} Priority
+                      </div>
+                      <div className="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300">
+                        <Clock className="w-4 h-4 text-blue-500" />
+                        <span>ETA: {incident.eta}</span>
+                      </div>
+                    </div>
+
+                    {/* Ambulance Info */}
+                    <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
+                      <Ambulance className="w-4 h-4 text-blue-500" />
+                      <span className="font-medium">{incident.ambulanceId}</span>
+                      <span>•</span>
+                      <span>{incident.driver}</span>
+                    </div>
+
+                    {/* Location and Rating */}
+                    <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4 text-green-500" />
+                        <span className="truncate">{incident.location}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <CheckCircle className="w-4 h-4 text-yellow-500" />
+                        <span>{incident.rating}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+
+                  <CardFooter className="flex justify-between items-center px-4 py-3">
+                    <div className="flex items-center gap-1 text-sm text-gray-500">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                      <span>Live Tracking</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" className="text-xs">
+                        <MapPin className="w-3 h-3 mr-1" />
+                        Track
+                      </Button>
+                      <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white text-xs">
+                        <Phone className="w-3 h-3 mr-1" />
+                        Contact
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
         </motion.div>
       </div>
     </div>
