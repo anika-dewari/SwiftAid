@@ -35,36 +35,31 @@ export default function AboutUs() {
 
   const teamMembers = [
     {
-      name: "Dr. Sarah Mitchell",
-      role: "Chief Medical Officer",
-      avatar: "SM",
-      bio: "15+ years in emergency medicine, pioneering trauma response protocols.",
-      specialties: ["Emergency Medicine", "Trauma Surgery", "Critical Care"],
-      achievements: ["Board Certified EM", "Trauma Center Director", "Research Publications: 45+"]
+      name: "Anika Dewari",
+      role: "Team Lead & Database Architect",
+      image: "/anika.png",
+      email: "anikadewari26@gmail.com",
+      bio: "Leading the database design and core backend development with expertise in spatial data systems.",
+      specialties: ["Database Design", "Backend Development", "REST API", "Spatial Queries"],
+      tasks: ["ER Diagram Design", "Normalized Schema Implementation", "MySQL/PostgreSQL Setup", "Version Control Management", "API Endpoints Development"]
     },
     {
-      name: "Michael Rodriguez",
-      role: "Operations Director", 
-      avatar: "MR",
-      bio: "Former paramedic with 20 years field experience, now optimizing dispatch systems.",
-      specialties: ["Emergency Operations", "Fleet Management", "Training Programs"],
-      achievements: ["EMS Veteran", "Dispatch Optimization", "Team Leadership"]
+      name: "Ayush Negi",
+      role: "Resource Management & Optimization", 
+      image: "/ayush.png",
+      email: "anegi52005@gmail.com",
+      bio: "Specializing in ambulance-hospital matching algorithms and system optimization for faster response times.",
+      specialties: ["Optimization Algorithms", "Performance Testing", "Traffic Simulation", "Load Testing"],
+      tasks: ["Ambulance Matching Algorithm", "JMeter Performance Testing", "Nearest Selection Logic", "Server Optimization", "Traffic Integration"]
     },
     {
-      name: "Emily Watson",
-      role: "Technology Lead",
-      avatar: "EW", 
-      bio: "Software architect specializing in real-time emergency response systems.",
-      specialties: ["Real-time Systems", "GPS Tracking", "Data Analytics"],
-      achievements: ["Tech Innovation Award", "System Architecture", "AI Integration"]
-    },
-    {
-      name: "David Chen",
-      role: "Quality Assurance",
-      avatar: "DC",
-      bio: "Healthcare quality expert ensuring highest standards in patient care.",
-      specialties: ["Quality Standards", "Compliance", "Process Improvement"],
-      achievements: ["Healthcare Quality", "ISO Certification", "Process Excellence"]
+      name: "Ritika Bisht",
+      role: "Frontend & Mobile Development",
+      image: "/ritika.png",
+      email: "bisht.ritika19200@gmail.com",
+      bio: "Creating intuitive user interfaces and real-time dashboards for emergency dispatch operations.",
+      specialties: ["React Development", "Real-time UI", "Maps Integration", "WebSocket Implementation"],
+      tasks: ["Dispatcher Interface Design", "Leaflet.js Integration", "Real-time Tracking UI", "Emergency Portal UX", "Mobile Responsiveness"]
     }
   ];
 
@@ -156,14 +151,14 @@ export default function AboutUs() {
             transition={{ duration: 1, delay: 0.2 }}
           >
             <h1 className="relative z-20 text-center font-bold text-white font-sans tracking-tight text-[clamp(2rem,6vw,6rem)] mb-8">
-              It&apos;s only delusional
+              Meet Our
               <br />
               <div className="relative mx-auto inline-block w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
                 <div className="absolute left-0 top-[1px] bg-clip-text bg-no-repeat text-transparent bg-gradient-to-r py-4 from-blue-500 via-purple-500 to-pink-500 [text-shadow:0_0_rgba(0,0,0,0.1)]">
-                  <span>until it works.</span>
+                  <span>Development Team</span>
                 </div>
                 <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 py-4">
-                  <span>until it works.</span>
+                  <span>Development Team</span>
                 </div>
               </div>
             </h1>
@@ -174,8 +169,8 @@ export default function AboutUs() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.6 }}
             >
-              Every innovation in emergency medicine starts with a vision that others call impossible. 
-              SwiftAid transforms that vision into life-saving reality.
+              Three dedicated computer science students collaborating to revolutionize emergency response 
+              through innovative technology, intelligent algorithms, and seamless user interfaces.
             </motion.p>
             
             <motion.div 
@@ -362,13 +357,26 @@ export default function AboutUs() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {teamMembers.map((member, index) => (
               <motion.div key={member.name} variants={itemVariants}>
                 <FloatingCard delay={index * 0.1} className="text-center p-6 h-full">
                   <div className="relative mb-6">
-                    <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-2xl font-bold animate-float">
-                      {member.avatar}
+                    <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-gradient-to-br from-blue-500 to-purple-500 animate-float">
+                      <img 
+                        src={member.image} 
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Fallback to initials if image fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">${member.name.split(' ').map(n => n[0]).join('')}</div>`;
+                          }
+                        }}
+                      />
                     </div>
                     <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
                       <div className="w-6 h-6 rounded-full bg-green-500 border-2 border-white dark:border-gray-900 animate-pulse" />
@@ -376,19 +384,28 @@ export default function AboutUs() {
                   </div>
                   
                   <h3 className="text-xl font-bold mb-1">{member.name}</h3>
-                  <p className="text-purple-500 font-medium mb-3">{member.role}</p>
+                  <p className="text-blue-500 font-medium mb-2">{member.role}</p>
+                  
+                  {/* Email */}
+                  <div className="text-xs text-muted-foreground mb-3">
+                    <div className="flex items-center justify-center space-x-1">
+                      <Mail className="h-3 w-3" />
+                      <span className="truncate">{member.email}</span>
+                    </div>
+                  </div>
+                  
                   <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                     {member.bio}
                   </p>
                   
                   <div className="space-y-3">
                     <div>
-                      <h4 className="text-sm font-semibold mb-2">Specialties</h4>
+                      <h4 className="text-sm font-semibold mb-2 text-blue-600 dark:text-blue-400">Technical Skills</h4>
                       <div className="flex flex-wrap gap-1 justify-center">
                         {member.specialties.map((specialty, idx) => (
                           <span
                             key={idx}
-                            className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded"
+                            className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full"
                           >
                             {specialty}
                           </span>
@@ -397,12 +414,12 @@ export default function AboutUs() {
                     </div>
                     
                     <div>
-                      <h4 className="text-sm font-semibold mb-2">Achievements</h4>
+                      <h4 className="text-sm font-semibold mb-2 text-green-600 dark:text-green-400">Current Tasks</h4>
                       <div className="space-y-1">
-                        {member.achievements.map((achievement, idx) => (
-                          <div key={idx} className="flex items-center justify-center space-x-1">
-                            <Star className="h-3 w-3 text-yellow-500" />
-                            <span className="text-xs text-muted-foreground">{achievement}</span>
+                        {member.tasks.map((task, idx) => (
+                          <div key={idx} className="flex items-start space-x-1 text-left">
+                            <Star className="h-3 w-3 text-yellow-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-xs text-muted-foreground leading-tight">{task}</span>
                           </div>
                         ))}
                       </div>
