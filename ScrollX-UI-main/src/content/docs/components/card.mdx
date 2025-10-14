@@ -1,0 +1,162 @@
+---
+title: Card
+description: Renders a card component comprising a header, content section, and footer...
+---
+
+<ComponentPreview
+  name="card-demo"
+  description="A subscription card for email and topic selection."
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="card" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>card.tsx</code>
+</p>
+<ComponentSource name="card" />
+
+<Step>Add util file</Step>
+
+<p>
+  <code>lib/utils.ts</code>
+</p>
+
+```tsx
+import { ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+## Usage
+
+```tsx
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+```
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Card Title</CardTitle>
+    <CardDescription>Card Description</CardDescription>
+    <CardAction>Card Action</CardAction>
+  </CardHeader>
+  <CardContent>
+    <p>Card Content</p>
+  </CardContent>
+  <CardFooter>
+    <p>Card Footer</p>
+  </CardFooter>
+</Card>
+```
+
+```tsx
+<Card className="custom-card-style">
+  <CardHeader>
+    <CardTitle>Custom Card</CardTitle>
+    <CardDescription>This card has a custom style.</CardDescription>
+    <CardAction>Card Action</CardAction>
+  </CardHeader>
+  <CardContent>
+    <p>Additional content with custom styles.</p>
+  </CardContent>
+  <CardFooter>
+    <Button variant="link">Learn More</Button>
+  </CardFooter>
+</Card>
+```
+---
+
+## Changelog
+
+#### 24-09-2025,  Added CardAction 
+
+- Introduced a new `CardAction` component to place actions (buttons, links) in the CardHeader aligned to the top-right.
+- Minor updates to existing components to include `data-slot` attributes for consistent styling.
+
+## API Reference
+
+### Card
+
+The `Card` component is used to create a customizable container with content sections such as title, description, and footer.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "className",
+      type: "string",
+      default: "—",
+      description: "Custom classes for styling.",
+    },
+    {
+      prop: "...props",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+      default: "—",
+      description: "All standard div props.",
+    },
+    {
+      prop: "CardHeader",
+      type: "React.ReactNode",
+      default: "—",
+      description: "Header section.",
+    },
+    {
+      prop: "CardTitle",
+      type: "React.ReactNode",
+      default: "—",
+      description: "Title inside header.",
+    },
+    {
+      prop: "CardDescription",
+      type: "React.ReactNode",
+      default: "—",
+      description: "Description inside header.",
+    },
+    {
+      prop: "CardAction",
+      type: "React.ReactNode",
+      default: "—",
+      description: "Action (e.g., button) in header.",
+    },
+    {
+      prop: "CardContent",
+      type: "React.ReactNode",
+      default: "—",
+      description: "Main content area.",
+    },
+    {
+      prop: "CardFooter",
+      type: "React.ReactNode",
+      default: "—",
+      description: "Footer section.",
+    },
+  ]}
+/>

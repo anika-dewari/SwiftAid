@@ -1,0 +1,174 @@
+---
+title: Lamphome
+description: A stylish, animated header component with dark/light mode toggle functionality.
+---
+
+<ComponentPreview
+  name="lamphome-demo"
+  className=""
+  description="An accessible Lamphome component built with ScrollX UI"
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="lamphome" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="framer-motion" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>lamphome.tsx</code>
+</p>
+<ComponentSource name="lamphome" />
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+## Usage Examples
+
+### Basic Usage
+
+```tsx
+import { Lamphome } from "@/components/ui/Lamphome";
+
+export default function MyPage() {
+  return <Lamphome />;
+}
+```
+
+### With Custom Title and Description
+
+```tsx
+import { Lamphome } from "@/components/ui/Lamphome";
+
+export default function MyPage() {
+  return (
+    <Lamphome
+      title={title}
+      description={description}
+      logoSrc={logo.src}
+      logoAlt={logo.alt}
+      navItems={navItems}
+      className="bg-gray-50 dark:bg-neutral-900"
+    >
+      {content}
+    </Lamphome>
+  );
+}
+```
+
+### With Child Components
+
+```tsx
+import { Lamphome } from "@/components/ui/Lamphome";
+import { MyComponent } from "@/components/MyComponent";
+
+export default function MyPage() {
+  return (
+    <Lamphome>
+      <MyComponent />
+      <div className="my-custom-content">
+        Additional content here
+      </div>
+    </Lamphome>
+  );
+}
+```
+
+
+
+## API Reference
+
+## Lamphome
+
+The root container for the `Lamphome` component. A stylish, animated header component with dark/light mode toggle functionality.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "title",
+      type: "string",
+      default: `"SCROLLX UI"`,
+      description: "Main heading displayed in the component."
+    },
+    {
+      prop: "description",
+      type: "string",
+      default: `"An open-source collection."`,
+      description: "Descriptive text displayed below the title."
+    },
+    {
+      prop: "logoSrc",
+      type: "string",
+      default: "optional",
+      description: "URL or path for the logo image displayed on the navbar."
+    },
+    {
+      prop: "logoAlt",
+      type: "string",
+      default: `"Logo"`,
+      description: "Alt text for the logo image."
+    },
+    {
+      prop: "navItems",
+      type: "Array<{ href: string; label: string }>",
+      default: "[]",
+      description: "Navigation links rendered in the navbar."
+    },
+    {
+      prop: "children",
+      type: "ReactNode",
+      default: "optional",
+      description: "Custom content rendered below the description."
+    },
+    {
+      prop: "className",
+      type: "string",
+      default: `""`,
+      description: "Additional custom CSS classes for the root container."
+    }
+  ]}
+/>
+
+
+
+
+
+## Integration with next-themes
+
+This component is designed to work with the `ThemeProvider` from `next-themes`. Ensure you have this provider set up in your layout file:
+
+```tsx
+// In your layout.tsx
+import { ThemeProvider } from "next-themes";
+
+export default function RootLayout({ children }) {
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+## Styling
+
+The component uses Tailwind CSS for styling with automatic dark mode support via the `dark:` variant. It leverages CSS transitions and Framer Motion animations for smooth visual effects.

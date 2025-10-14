@@ -1,0 +1,96 @@
+---
+title: Aspect Ratio
+description: A responsive container component that maintains a fixed aspect ratio, commonly used for media like images and videos.
+---
+
+<ComponentPreview
+  name="aspectratio-demo"
+  className="[&_.preview>[data-orientation=vertical]]:sm:max-w-[70%]"
+  description="An accessible Aspect Ratio component built with Radix UI"
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="aspect-ratio" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="@radix-ui/react-aspect-ratio" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>aspect-ratio.tsx</code>
+</p>
+<ComponentSource name="aspect-ratio" />
+
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+## Usage
+
+```tsx
+import Image from "next/image"
+
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+```
+
+```tsx
+<div className="w-[450px]">
+  <AspectRatio ratio={16 / 9}>
+    <Image src="..." alt="Image" className="rounded-md object-cover" />
+  </AspectRatio>
+</div>
+```
+
+## API Reference
+
+### AspectRatio
+
+The root container for the `AspectRatio` component, which helps to maintain a consistent aspect ratio for its child content, like images or videos.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "ratio",
+      type: "number",
+      default: "16 / 9",
+      description: "Aspect ratio of the container (e.g., 4/3, 1/1). Used in AspectRatio."
+    },
+    {
+      prop: "children",
+      type: "ReactNode",
+      default: "required",
+      description: "Content inside the container. Used in AspectRatio and AspectRatioChild."
+    },
+    {
+      prop: "fill",
+      type: "boolean",
+      default: "false",
+      description: "Makes the child fill the entire container. Used in AspectRatioChild."
+    },
+    {
+      prop: "object-cover",
+      type: "boolean",
+      default: "true",
+      description: "Keeps aspect ratio while covering the container. Used in AspectRatioChild."
+    },
+    {
+      prop: "className",
+      type: "string",
+      default: "—",
+      description: "Optional styling class. Used in AspectRatio and AspectRatioChild."
+    }
+  ]}
+/>

@@ -1,0 +1,115 @@
+---
+title: Button
+description: Reusable button component with multiple variants and sizes.
+---
+
+<ComponentPreview
+  name="button-demo"
+  className="[&_.preview>[data-orientation=vertical]]:sm:max-w-[70%]"
+  description="An accessible Button component built with Radix UI"
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="button" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="@radix-ui/react-slot" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>button.tsx</code>
+</p>
+<ComponentSource name="button" />
+
+<Step>Add util file</Step>
+
+<p>
+  <code>lib/utils.ts</code>
+</p>
+
+
+```tsx
+import { ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+
+## Usage
+
+```tsx
+import { Button } from "@/components/ui/button";
+```
+
+```tsx
+<Button>Default</Button>
+<Button variant="link">Link</Button>
+<Button variant="success">Success</Button>
+```
+```tsx
+<Button variant="gradient" size="lg">
+  Get Started
+</Button>
+```
+
+
+## API Reference
+
+### Button
+
+`Button` is the main component used to render a customizable button.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "variant",
+      type: `"default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "success" | "warning" | "info" | "dark" | "light" | "gradient" | "glass"`,
+      default: `"default"`,
+      description: "Controls the visual style of the button."
+    },
+    {
+      prop: "size",
+      type: `"sm" | "default" | "lg" | "icon"`,
+      default: `"default"`,
+      description: "Adjusts the button size."
+    },
+    {
+      prop: "asChild",
+      type: "boolean",
+      default: "false",
+      description: "Renders the button as its child using Slot."
+    },
+    {
+      prop: "className",
+      type: "string",
+      default: "—",
+      description: "Additional custom class names."
+    },
+    {
+      prop: "...props",
+      type: "HTMLButtonElement attributes",
+      default: "—",
+      description: "Inherits all standard button attributes and events."
+    }
+  ]}
+/>
+

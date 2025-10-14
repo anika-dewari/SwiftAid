@@ -1,0 +1,135 @@
+---
+title: Globe
+description:  5kb WebGL Globe
+---
+
+<ComponentPreview name="globe-demo" className="p-0" description="" />
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="globe" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="@react-spring/web cobe" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>globe.tsx</code>
+</p>
+<ComponentSource name="globe" />
+
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+## Usage
+
+```tsx
+import { Globe } from "@/components/ui/globe";
+```
+
+```tsx
+  <Globe
+    rotateCities={["new york", "london", "tokyo", "dubai"]}
+    rotationSpeed={3000}
+    markers={[
+      { location: [40.7128, -74.006], size: 0.1 },
+      { location: [51.5074, -0.1278], size: 0.1 },
+      { location: [35.6762, 139.6503], size: 0.1 },
+      { location: [25.2048, 55.2708], size: 0.1 }
+    ]}
+    glowColor={[0.1, 0.8, 1]}
+    markerColor={[0.1, 0.8, 1]}
+    className="max-w-[800px]"
+  />
+```
+
+## Examples
+
+---
+
+<Step>Cities based Rotation</Step>
+<ComponentPreview name="globecities" className="p-0" description="" />
+
+## API Reference
+
+### Globe
+
+The `Globe` component creates beautiful 5kb WebGL Globe
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "baseColor",
+      type: "[number, number, number]",
+      default: "[0.3, 0.3, 0.3]",
+      description: "Base color of the globe in RGB."
+    },
+    {
+      prop: "markerColor",
+      type: "[number, number, number]",
+      default: "[0.1, 0.8, 1]",
+      description: "Color of the marker points in RGB."
+    },
+    {
+      prop: "glowColor",
+      type: "[number, number, number]",
+      default: "[1, 1, 1]",
+      description: "Color of the globe glow in RGB."
+    },
+    {
+      prop: "markers",
+      type: "Array<{ location: [number, number]; size: number }>",
+      default: "Default SF/NY markers",
+      description: "Coordinate markers with optional size."
+    },
+    {
+      prop: "scale",
+      type: "number",
+      default: "1",
+      description: "Size multiplier for the globe."
+    },
+    {
+      prop: "className",
+      type: "string",
+      default: "''",
+      description: "CSS class name for the outer container."
+    },
+    {
+      prop: "rotateToLocation",
+      type: "string | [number, number]",
+      default: "—",
+      description: "Initial rotation target — city name or coordinates."
+    },
+    {
+      prop: "autoRotate",
+      type: "boolean",
+      default: "true",
+      description: "Enable or disable idle globe rotation."
+    },
+    {
+      prop: "rotateCities",
+      type: "string[]",
+      default: "[]",
+      description: "City names to auto-rotate through."
+    },
+    {
+      prop: "rotationSpeed",
+      type: "number",
+      default: "3000",
+      description: "Time (ms) between auto-rotated cities."
+    }
+  ]}
+/>

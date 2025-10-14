@@ -1,0 +1,142 @@
+---
+title: MorphoText Flip
+description: Animated text component that flips between words with smooth transitions.
+---
+
+<ComponentPreview
+  name="morphotextflip-demo"
+  className="p-0"
+  description="flips words with smooth transitions."
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="morphotextflip" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="framer-motion" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>morphotextflip.tsx</code>
+</p>
+<ComponentSource name="morphotextflip" />
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+## Usage
+
+```tsx
+import { MorphoTextFlip } from "@/components/ui/morphotextflip";
+```
+
+```tsx
+<MorphoTextFlip
+  words={["remarkable", "bold", "scalable", "beautiful"]}
+  textClassName="text-4xl md:text-7xl text-rose-600 dark:text-rose-400 font-bold mt-1"
+  animationType="flipY"
+/>
+```
+## Examples
+
+---
+
+<Step>SlideUp Variant</Step>
+
+<ComponentPreview
+  name="morphotextslideup"
+  className=""
+  description=""
+/>
+
+---
+
+<Step>FadeScale Variant</Step>
+
+<ComponentPreview
+  name="morphotextfadescale"
+  className=""
+  description=""
+/>
+
+---
+
+<Step>SlideRotate Variant</Step>
+
+<ComponentPreview
+  name="morphotextsliderotate"
+  className=""
+  description=""
+/>
+
+---
+
+<Step>Elastic Variant</Step>
+
+<ComponentPreview
+  name="morphotextelastic"
+  className=""
+  description=""
+/>
+
+## API Reference
+
+### MorphoTextFlip
+
+The `MorphoTextFlip` component renders animated text component that flips between words with smooth transitions.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "words",
+      type: "string[]",
+      default: "required",
+      description: "Words to animate through."
+    },
+    {
+      prop: "interval",
+      type: "number",
+      default: "—",
+      description: "Time between word changes (ms)."
+    },
+    {
+      prop: "animationType",
+      type: `"slideUp" | "fadeScale" | "flipY" | "slideRotate" | "elastic"`,
+      default: "—",
+      description: "Transition animation style."
+    },
+    {
+      prop: "animationDuration",
+      type: "number",
+      default: "—",
+      description: "Duration of each animation (ms)."
+    },
+    {
+      prop: "className",
+      type: "string",
+      default: "—",
+      description: "Class for the outer container."
+    },
+    {
+      prop: "textClassName",
+      type: "string",
+      default: "—",
+      description: "Class for the animated text element."
+    }
+  ]}
+/>
+
+

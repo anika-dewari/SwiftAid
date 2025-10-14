@@ -1,0 +1,149 @@
+---
+title: Profile Card
+description:  A reusable profile card component displaying a user's image, name, bio, skills, and social links with interactive animations.
+---
+
+<ComponentPreview
+  name="profilecard-demo"
+  description="Animated reusable profile card component"
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  
+  <TabsContent value="cli">
+    <PkgOptions name="profilecard" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="framer-motion" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>profilecard.tsx</code>
+</p>
+<ComponentSource name="profilecard" />
+
+
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+
+## Usage
+```tsx
+import ProfileCard from "@/components/ui/profilecard";
+```
+
+```tsx
+<ProfileCard
+      spotlight
+      spotlightColor="99,102,241"
+      img="https://github.com/Adityakishore0.png"
+      name="Ahdeetai"
+      bio="Creator of ScrolIX UI, a modern component library built for speed and scalability."
+      skills={skills}
+      socialLinks={socialLinks}
+      position="Senior Software Engineer"
+    />
+```
+---
+
+## Changelog
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>3D Tilt Effect</td>
+      <td>Card now tilts based on mouse movement when revealed.</td>
+    </tr>
+    <tr>
+      <td>Spotlight Effect</td>
+      <td>Optional radial spotlight on skills.</td>
+    </tr>
+    <tr>
+      <td>Custom Social Links</td>
+      <td>Added support for multiple social links.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+---
+
+## API Reference
+
+### ProfileCard
+
+The `ProfileCard` component is used to create an interactive profile card with user image, name, role, bio, skills, and social links.
+
+## Props
+
+<PropsTable 
+  rows={[
+    {
+      prop: "img",
+      type: "string",
+      default: "required",
+      description: "Profile image URL or path."
+    },
+    {
+      prop: "name",
+      type: "string",
+      default: "required",
+      description: "User’s full name."
+    },
+    {
+      prop: "position",
+      type: "string",
+      default: "required",
+      description: "Job title or role."
+    },
+    {
+      prop: "bio",
+      type: "string",
+      default: "required",
+      description: "Short user bio or description."
+    },
+    {
+      prop: "skills",
+      type: "Skill[]",
+      default: "required",
+      description: "Array of skills with name and icon."
+    },
+    {
+      prop: "socialLinks",
+      type: "SocialLink[]",
+      default: "[]",
+      description: "Array of social links with name, url, and icon."
+    },
+    {
+      prop: "spotlight",
+      type: "boolean",
+      default: "false",
+      description: "Enables interactive spotlight hover effect."
+    },
+    {
+      prop: "spotlightColor",
+      type: "string",
+      default: "\"14, 165, 233\"",
+      description: "RGB color used for the spotlight glow."
+    }
+  ]}
+/>
+
+

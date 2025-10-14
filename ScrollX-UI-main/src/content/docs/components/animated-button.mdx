@@ -1,0 +1,185 @@
+---
+title: Animated Button
+description: AnimatedButton is a highly customizable animated button component with shimmer effects, glow, and visual styling options.
+---
+
+<ComponentPreview
+  name="animatedbutton-demo"
+  className="[&_.preview>[data-orientation=vertical]]:sm:max-w-[70%]"
+  description="An accessible Button component built with Radix UI"
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="animated-button" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="@radix-ui/react-slot" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>animated-button.tsx</code>
+</p>
+<ComponentSource name="animated-button" />
+
+<Step>Add util file</Step>
+
+<p>
+  <code>lib/utils.ts</code>
+</p>
+
+
+```tsx
+import { ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+
+## Usage
+
+```tsx
+import { AnimatedButton } from "@/components/ui/animated-button";
+```
+
+```tsx
+<AnimatedButton
+        className="bg-green-500 text-white"
+        variant="default"
+        size="default"
+        glow={true}
+        textEffect="normal"
+        uppercase={true}
+        rounded="custom"
+        asChild={false}
+        hideAnimations={false}
+        shimmerColor="#39FF14"
+        shimmerSize="0.15em"
+        shimmerDuration="3s"
+        borderRadius="100px"
+        background="rgba(0, 0, 0, 1)"
+      >
+        ScrollX UI
+      </AnimatedButton>
+```
+
+
+## API Reference
+
+### Animated Button
+
+`AnimatedButton` is a customizable button component with animation, shimmer, and visual styling options.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "variant",
+      type: `"default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "success" | "warning" | "info" | "dark" | "light" | "gradient" | "glass"`,
+      default: `"default"`,
+      description: "Controls the visual style of the button."
+    },
+    {
+      prop: "size",
+      type: `"sm" | "default" | "lg" | "icon"`,
+      default: `"default"`,
+      description: "Adjusts the button size."
+    },
+    {
+      prop: "glow",
+      type: "boolean",
+      default: "false",
+      description: "Enables glowing animation around the button."
+    },
+    {
+      prop: "textEffect",
+      type: `"normal" | "shimmer" | "gradient" | "glitch" | string`,
+      default: `"normal"`,
+      description: "Applies a text animation or effect."
+    },
+    {
+      prop: "uppercase",
+      type: "boolean",
+      default: "false",
+      description: "Renders button text in uppercase."
+    },
+    {
+      prop: "rounded",
+      type: `"none" | "sm" | "md" | "lg" | "xl" | "full" | "custom"`,
+      default: `"md"`,
+      description: "Controls border radius style."
+    },
+    {
+      prop: "borderRadius",
+      type: "string",
+      default: "—",
+      description: "Custom border radius. Applies only when rounded = 'custom'."
+    },
+    {
+      prop: "background",
+      type: "string",
+      default: "—",
+      description: "Custom background color or gradient."
+    },
+    {
+      prop: "shimmerColor",
+      type: "string",
+      default: "—",
+      description: "Color used in shimmer effect (e.g., '#39FF14')."
+    },
+    {
+      prop: "shimmerSize",
+      type: "string",
+      default: `"0.15em"`,
+      description: "Size/thickness of the shimmer effect."
+    },
+    {
+      prop: "shimmerDuration",
+      type: "string",
+      default: `"3s"`,
+      description: "Duration of shimmer animation."
+    },
+    {
+      prop: "asChild",
+      type: "boolean",
+      default: "false",
+      description: "Render the button as a child component using Slot."
+    },
+    {
+      prop: "hideAnimations",
+      type: "boolean",
+      default: "false",
+      description: "Disables all visual animations when true."
+    },
+    {
+      prop: "className",
+      type: "string",
+      default: "undefined",
+      description: "Additional custom class names for styling."
+    },
+    {
+      prop: "...props",
+      type: "HTMLButtonElement attributes",
+      default: "—",
+      description: "All standard HTML button attributes and events."
+    }
+  ]}
+/>
+

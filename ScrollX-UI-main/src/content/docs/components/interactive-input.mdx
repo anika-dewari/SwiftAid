@@ -1,0 +1,183 @@
+---
+title: Interactive input
+description: InteractiveInput is a highly customizable interactive input component with shimmer effects, glow, and visual styling options.
+---
+
+<ComponentPreview
+  name="interactiveinput-demo"
+  className="[&_.preview>[data-orientation=vertical]]:sm:max-w-[70%]"
+  description="An accessible Input component built with Radix UI"
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="interactive-input" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="@radix-ui/react-slot" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>interactive-input.tsx</code>
+</p>
+<ComponentSource name="interactive-input" />
+
+<Step>Add util file</Step>
+
+<p>
+  <code>lib/utils.ts</code>
+</p>
+
+
+```tsx
+import { ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+
+## Usage
+
+```tsx
+import { InteractiveInput } from "@/components/ui/interactive-input";
+```
+
+```tsx
+<InteractiveInput
+        className="bg-green-500 text-white"
+        variant="default"
+        inputSize="default"
+        glow={true}
+        rounded="custom"
+        hideAnimations={false}
+        uppercase={true}
+        textEffect="normal"
+        shimmerColor="#39FF14"
+        shimmerSize="0.15em"
+        shimmerDuration="3s"
+        borderRadius="100px"
+        background="rgba(0, 0, 0, 1)"
+        placeholder="Generate with ScrollX UI"
+       />
+```
+
+
+## API Reference
+
+### interactive input
+
+`InteractiveInput` is a customizable input component with animation, shimmer, and visual styling options.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "variant",
+      type: `"default" | "outline" | "ghost" | "glow"`,
+      default: `"default"`,
+      description: "Visual style of the input."
+    },
+    {
+      prop: "inputSize",
+      type: `"sm" | "default" | "lg" | "icon"`,
+      default: `"default"`,
+      description: "Adjusts the size of the input."
+    },
+    {
+      prop: "rounded",
+      type: `"none" | "default" | "full" | "custom"`,
+      default: `"default"`,
+      description: "Border radius style."
+    },
+    {
+      prop: "borderRadius",
+      type: "string",
+      default: `"—"`,
+      description: "Custom border radius (used when rounded is 'custom')."
+    },
+    {
+      prop: "glow",
+      type: "boolean",
+      default: "false",
+      description: "Enables glowing animation around the input."
+    },
+    {
+      prop: "textEffect",
+      type: `"normal" | "spread"`,
+      default: `"normal"`,
+      description: "Applies animated text styling."
+    },
+    {
+      prop: "uppercase",
+      type: "boolean",
+      default: "false",
+      description: "Transforms text to uppercase."
+    },
+    {
+      prop: "background",
+      type: "string",
+      default: `"—"`,
+      description: "Sets background color or gradient."
+    },
+    {
+      prop: "shimmerColor",
+      type: "string",
+      default: `"—"`,
+      description: "Shimmer color value (e.g., '#39FF14')."
+    },
+    {
+      prop: "shimmerSize",
+      type: "string",
+      default: `"—"`,
+      description: "Size or thickness of shimmer (e.g., '0.15em')."
+    },
+    {
+      prop: "shimmerDuration",
+      type: "string",
+      default: `"—"`,
+      description: "Duration of shimmer animation (e.g., '3s')."
+    },
+    {
+      prop: "asChild",
+      type: "boolean",
+      default: "false",
+      description: "Renders input as a child using Slot."
+    },
+    {
+      prop: "hideAnimations",
+      type: "boolean",
+      default: "false",
+      description: "Disables all input animations."
+    },
+    {
+      prop: "className",
+      type: "string",
+      default: `"undefined"`,
+      description: "Additional classes to style the input."
+    },
+    {
+      prop: "...props",
+      type: "HTMLInputElement attributes",
+      default: "—",
+      description: "Inherits all standard input element props."
+    }
+  ]}
+/>
+

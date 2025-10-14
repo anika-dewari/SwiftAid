@@ -1,0 +1,669 @@
+---
+title: CLI Quickstart
+description: Command Line Interface (CLI) to manage and configure your project efficiently.
+---
+
+<Steps>
+  <Step>Initialize CLI</Step>
+</Steps>
+
+Use the `init` command to initialize configuration and dependencies for a new project.
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest init
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    npx shadcn@latest init
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest init
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+     bun x --bun shadcn@latest init
+    ```
+  </TabsContent> 
+</Tabs>
+
+This installs dependencies, sets up the `cn` utility, configures `tailwind.config.js`, and generates a `components.json` file.
+
+You will be asked a few questions to configure `components.json`:
+
+```bash
+Which style would you like to use? › New York
+Which color would you like to use as base color? › Zinc
+Do you want to use CSS variables for colors? › no / yes
+```
+
+### Options for `init`
+
+```bash
+Usage: shadcn init [options] [components...]
+
+initialize your project and install dependencies
+
+Arguments:
+  components         the components to add or a url to the component.
+
+Options:
+  -d, --defaults    use default values i.e new-york, zinc and css variables. (default: false)
+  -f, --force       force overwrite of existing components.json. (default: false)
+  -y, --yes         skip confirmation prompt. (default: false)
+  -c, --cwd <cwd>   the working directory. defaults to the current directory.
+  -h, --help       display help for command
+
+```
+
+---
+
+<Steps>
+  <Step>Add Components</Step>
+</Steps>
+
+Use the `add` command to add new components and their dependencies:
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest add [component]
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    npx shadcn@latest add [component]
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest add [component]
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bun x --bun shadcn@latest add [component]
+    ```
+  </TabsContent> 
+</Tabs>
+
+### Options for `add`
+
+```bash
+Usage: shadcn add [options] [components...]
+
+add a component to your project
+
+Arguments:
+  components         the components to add or a url to the component.
+
+Options:
+  -y, --yes          skip confirmation prompt. (default: false)
+  -o, --overwrite    overwrite existing files. (default: false)
+  -c, --cwd <cwd>    the working directory. defaults to the current directory.
+  -p, --path <path>  the path to add the component to.
+  -h, --help         display help for command
+```
+---
+
+<Steps>
+  <Step>Use in Monorepo</Step>
+</Steps>
+
+To specify a workspace path in a monorepo, use `-c` or `--cwd`:
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest init -c ./apps/www
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    npx shadcn@latest init -c ./apps/www
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest init -c ./apps/www
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bun x --bun shadcn@latest init -c ./apps/www
+    ```
+  </TabsContent> 
+</Tabs>
+
+or
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest add alert-dialog -c ./apps/www
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    npx shadcn@latest add alert-dialog -c ./apps/www
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest add alert-dialog -c ./apps/www
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bun x --bun shadcn@latest add alert-dialog -c ./apps/www
+    ```
+  </TabsContent> 
+</Tabs>
+
+---
+
+<Steps>
+  <Step>Installation through CLI</Step>
+</Steps>
+
+You can install ScrollX UI components through the CLI.
+ Use the following command structure:
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest add https://scrollxui.dev/registry/[component].json
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    npx shadcn@latest add https://scrollxui.dev/registry/[component].json
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest add https://scrollxui.dev/registry/[component].json
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bun x --bun shadcn@latest add https://scrollxui.dev/registry/[component].json
+    ```
+  </TabsContent> 
+</Tabs>
+
+Integrates a new component into your project.
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest add https://scrollxui.dev/registry/alert-dialog.json
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    npx shadcn@latest add https://scrollxui.dev/registry/alert-dialog.json
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest add https://scrollxui.dev/registry/alert-dialog.json
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bun x --bun shadcn@latest add https://scrollxui.dev/registry/alert-dialog.json
+    ```
+  </TabsContent> 
+</Tabs>
+
+## Shadcn CLI 3.0
+
+You can now have namespaced registries with ShadCN CLI 3.0.
+
+Edit `components.json` file
+
+```json
+{
+  "registries": {
+    "@scrollxui": "https://www.scrollxui.dev/registry/{name}.json"
+  }
+}
+```
+
+To install any component, use the following command:
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest add @scrollxui/[component]
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    yarn shadcn@latest add @scrollxui/[component]
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest add @scrollxui/[component]
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bunx --bun shadcn@latest add @scrollxui/[component]
+    ```
+  </TabsContent> 
+</Tabs>
+
+Example:
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest add @scrollxui/profilecard
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    yarn shadcn@latest add @scrollxui/profilecard
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest add @scrollxui/profilecard
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bunx --bun shadcn@latest add @scrollxui/profilecard
+    ```
+  </TabsContent> 
+</Tabs>
+
+
+<Step>Search and Discovery</Step>
+
+You can search, view, and discover components from registries before installing them.
+
+### View
+
+View items from the registry before installing:
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest view @scrollxui
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    yarn shadcn@latest view @scrollxui
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest view @scrollxui
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bunx --bun shadcn@latest view @scrollxui
+    ```
+  </TabsContent> 
+</Tabs>
+
+### Search
+
+Search items from registries:
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest search @scrollxui -q "profilecard"
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    yarn shadcn@latest search @scrollxui -q "profilecard"
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest search @scrollxui -q "profilecard"
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bunx --bun shadcn@latest search @scrollxui -q "profilecard"
+    ```
+  </TabsContent> 
+</Tabs>
+
+### List
+
+List all items from a registry:
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest list @scrollxui
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    yarn shadcn@latest list @scrollxui
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest list @scrollxui
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bunx --bun shadcn@latest list @scrollxui
+    ```
+  </TabsContent> 
+</Tabs>
+
+Preview components before installing them. Search across multiple registries. See the code and all dependencies upfront.
+
+## MCP Server
+
+<Step>Set Up the MCP Server</Step>
+
+The shadcn MCP Server allows AI assistants to interact with items from registries. You can browse available components, search for specific ones, and install them directly into your project using natural language.
+
+Add the `ScrollX UI` registry to your project's components.json file.
+
+```json
+{
+  "registries": {
+    "@scrollxui": "https://www.scrollxui.dev/registry/{name}.json"
+  }
+}
+```
+For example, you can ask an AI assistant to "Build a landing page using components from the ScrollX UI registry" or "Find me a login form from the ScrollX UI registry".
+
+Add the MCP server to your project:
+
+<Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest mcp init
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    yarn shadcn@latest mcp init
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest mcp init
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+    bunx --bun shadcn@latest mcp init
+    ```
+  </TabsContent> 
+</Tabs>
+
+Registries are configured in your project's components.json file.
+
+<h3>Configure for AI Assistants</h3>
+
+<Step>Choose Your Preferred AI Assistant</Step>
+
+Select the AI assistant you want to integrate with your project. Each tab provides the commands to configure that assistant client quickly and correctly using the ShadCN CLI.
+
+<Tabs defaultValue="cursor" className="w-full">
+
+  <TabsList>
+    <TabsTrigger value="cursor">cursor</TabsTrigger>
+    <TabsTrigger value="claude">claude</TabsTrigger>
+    <TabsTrigger value="VS Code">VS Code</TabsTrigger>
+  </TabsList>
+
+
+   <Step>Choose Your Preferred Package Manager</Step>
+
+  <TabsContent value="cursor">
+   <Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest mcp init --client cursor
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    npx shadcn@latest mcp init --client cursor
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest mcp init --client cursor
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+   bun x --bun shadcn@latest mcp init --client cursor
+    ```
+  </TabsContent> 
+</Tabs>
+
+  </TabsContent>
+  
+  <TabsContent value="claude">
+    
+    <Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest mcp init --client claude
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    npx shadcn@latest mcp init --client claude
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest mcp init --client claude
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+   bun x --bun shadcn@latest mcp init --client claude
+    ```
+  </TabsContent> 
+</Tabs>
+
+  </TabsContent>
+  
+  <TabsContent value="VS Code">
+    
+    <Tabs defaultValue="npm" className="w-full">
+  <TabsList>
+    <TabsTrigger value="npm">npm</TabsTrigger>
+    <TabsTrigger value="yarn">yarn</TabsTrigger>
+    <TabsTrigger value="pnpm">pnpm</TabsTrigger>
+    <TabsTrigger value="bun">bun</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="npm">
+    ```bash
+    npx shadcn@latest mcp init --client vscode
+    ```
+  </TabsContent>
+  
+  <TabsContent value="yarn">
+    ```bash
+    npx shadcn@latest mcp init --client vscode
+    ```
+  </TabsContent>
+  
+  <TabsContent value="pnpm">
+    ```bash
+    pnpm dlx shadcn@latest mcp init --client vscode
+    ```
+  </TabsContent>
+    
+  <TabsContent value="bun">
+    ```bash
+   bun x --bun shadcn@latest mcp init --client vscode
+    ```
+  </TabsContent> 
+</Tabs>
+
+  </TabsContent>
+</Tabs>
+
+Select the package manager that corresponds to your development environment to configure the AI assistant client using the ShadCN CLI. Each option provides the correct command syntax to set up the assistant quickly and seamlessly.

@@ -1,0 +1,176 @@
+---
+title: Accordion
+description: A vertically stacked set of interactive headings that each reveal a section of content.
+---
+
+<ComponentPreview
+  name="accordion-demo"
+  className="[&_.preview>[data-orientation=vertical]]:sm:max-w-[70%]"
+  description="An accessible accordion component built with Radix UI"
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="accordion" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="@radix-ui/react-accordion" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>accordion.tsx</code>
+</p>
+<ComponentSource name="accordion" />
+
+<Step>Add util file</Step>
+
+<p>
+  <code>lib/utils.ts</code>
+</p>
+
+```jsx
+import { ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+<Step>Update tailwind.config.ts</Step>
+
+```tsx
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  theme: {
+    extend: {
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "shake-smooth": {
+          '0%': { transform: 'translateX(0)' },
+          '10%': { transform: 'translateX(-12px)' },
+          '20%': { transform: 'translateX(12px)' },
+          '30%': { transform: 'translateX(-10px)' },
+          '40%': { transform: 'translateX(10px)' },
+          '50%': { transform: 'translateX(-6px)' },
+          '60%': { transform: 'translateX(6px)' },
+          '70%': { transform: 'translateX(-3px)' },
+          '80%': { transform: 'translateX(3px)' },
+          '90%': { transform: 'translateX(-1px)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "shake-smooth": "shake-smooth 0.5s ease-in-out",
+      },
+    },
+  },
+};
+```
+
+## Usage
+
+```tsx
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+```
+
+```tsx
+<Accordion type="single" collapsible>
+  <AccordionItem value="item-1">
+    <AccordionTrigger>Is it accessible?</AccordionTrigger>
+    <AccordionContent>
+      Yes. It adheres to the WAI-ARIA design pattern.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+## API Reference
+
+### Accordion
+
+`Accordion` is the root component.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "type",
+      type: `"single" | "multiple"`,
+      default: `"single"`,
+      description: "Accordion type; single allows only one item open."
+    },
+    {
+      prop: "defaultValue",
+      type: "string | string[]",
+      default: "—",
+      description: "Initial open item(s)."
+    },
+    {
+      prop: "value",
+      type: "string | string[]",
+      default: "—",
+      description: "Controlled open item(s)."
+    },
+    {
+      prop: "onValueChange",
+      type: "(value: string | string[]) => void",
+      default: "—",
+      description: "Callback triggered on value change."
+    },
+    {
+      prop: "collapsible",
+      type: "boolean",
+      default: "false",
+      description: "If true, allows closing the open item in 'single' mode."
+    },
+    {
+      prop: "value (AccordionItem)",
+      type: "string",
+      default: "required",
+      description: "Unique key for the accordion item."
+    },
+    {
+      prop: "disabled (AccordionItem)",
+      type: "boolean",
+      default: "false",
+      description: "Disables the accordion item."
+    },
+    {
+      prop: "children",
+      type: "ReactNode",
+      default: "required",
+      description: "Used in: Accordion, Trigger, Content — represents nested elements."
+    }
+  ]}
+/>
+

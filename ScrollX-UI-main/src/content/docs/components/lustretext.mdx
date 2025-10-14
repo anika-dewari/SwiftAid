@@ -1,0 +1,142 @@
+---
+title: Lustre Text
+description: A lustrous text component with animated gradient shine.
+---
+
+<ComponentPreview
+  name="lustretext-demo"
+  className=""
+  description="Interactive lustrous text effect with glowing gradient shine"
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="lustretext" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>lustretext.tsx</code>
+</p>
+<ComponentSource name="lustretext" />
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+<Step>Add Utilities</Step>
+<p>
+  <code>place it in your global.css</code>
+</p>
+```css
+@layer utilities {
+  .lustre-text {
+    @apply inline-block font-extrabold text-transparent bg-clip-text bg-[length:200%_auto] bg-[position:0%_center];
+  }
+
+  .lustre-light {
+    background-image: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.05) 0%,
+      rgba(0, 0, 0, 0.3) 30%,
+      rgba(0, 0, 0, 0.7) 45%,
+      #ffffff 50%,
+      rgba(0, 0, 0, 0.7) 55%,
+      rgba(0, 0, 0, 0.3) 70%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+  }
+
+  .lustre-dark {
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.15) 30%,
+      rgba(255, 255, 255, 0.4) 45%,
+      #ffffff 50%,
+      rgba(255, 255, 255, 0.4) 55%,
+      rgba(255, 255, 255, 0.15) 70%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+  }
+}
+```
+
+`tailwind.config.ts`
+
+```jsx
+module.exports = { 
+   theme: { 
+     extend: { 
+       keyframes: { 
+         shine: { 
+           '0%': { 'background-position': '100%' }, 
+          '100%': { 'background-position': '-100%' }, 
+         }, 
+      }, 
+       animation: { 
+        shine: 'shine 5s linear infinite', 
+       }, 
+     }, 
+    }, 
+    plugins: [], 
+ };
+ ```
+
+## Usage
+
+```tsx
+import LustreText from "@/components/ui/lustretext";
+```
+
+```tsx
+<LustreText text="Shine your UI with ScrollX UI!" />
+```
+
+
+## API Reference
+
+### LustreText
+
+A lustrous or shiny text component that gives a glowing, reflective appearance using animated gradients.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "text",
+      type: "string",
+      default: "required",
+      description: "The content to display with shine animation."
+    },
+    {
+      prop: "disabled",
+      type: "boolean",
+      default: "false",
+      description: "Disables the shine effect if true."
+    },
+    {
+      prop: "speed",
+      type: "number",
+      default: "5",
+      description: "Animation speed in seconds."
+    },
+    {
+      prop: "className",
+      type: "string",
+      default: "—",
+      description: "Optional class names for styling."
+    }
+  ]}
+/>

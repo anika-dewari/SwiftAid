@@ -1,0 +1,149 @@
+---
+title: Pagination
+description:  A flexible and animated pagination component with active and hover states.
+---
+
+<ComponentPreview
+  name="pagination-demo"
+  description=""
+/>
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  
+  <TabsContent value="cli">
+    <PkgOptions name="pagination" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="framer-motion" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>pagination.tsx</code>
+</p>
+<ComponentSource name="pagination" />
+
+<Step>Add util file</Step>
+<p>
+  <code>lib/utils.ts</code>
+</p>
+```jsx
+ import {(ClassValue, clsx)} from "clsx";
+  import {twMerge} from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+
+## Usage
+```tsx
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+```
+
+```tsx
+<Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" onClick={handlePrevious} />
+        </PaginationItem>
+        {[1, 2, 3].map((page) => (
+          <PaginationItem key={page}>
+            <PaginationLink
+              href="#"
+              isActive={activePage === page}
+              onClick={() => handlePageClick(page)}
+            >
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="#" onClick={handleNext} />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+```
+
+
+## API Reference
+
+ ### Pagination
+
+ Root container (`className`, nav props)
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "className",
+      type: "string",
+      default: "—",
+      description: "Applies to: PaginationContent, PaginationItem, PaginationLink, PaginationEllipsis."
+    },
+    {
+      prop: "isActive",
+      type: "boolean",
+      default: "false",
+      description: "Highlights active page. Used in: PaginationLink."
+    },
+    {
+      prop: "shiny",
+      type: "boolean",
+      default: "false",
+      description: "Enables shimmer animation. Used in: PaginationLink."
+    },
+    {
+      prop: "shinySpeed",
+      type: "number",
+      default: "—",
+      description: "Speed of shimmer effect (in seconds). Used in: PaginationLink."
+    },
+    {
+      prop: "size",
+      type: `"sm" | "default" | "lg"`,
+      default: `"default"`,
+      description: "Size of the link. Used in: PaginationLink."
+    },
+    {
+      prop: "variant",
+      type: `"default" | "outline" | "ghost" | "gradient"`,
+      default: `"default"`,
+      description: "Visual style. Used in: PaginationLink."
+    },
+    {
+      prop: "...props",
+      type: "HTML element attributes",
+      default: "—",
+      description: "Passed to: ul (PaginationContent), li (PaginationItem), a (PaginationLink), span (PaginationEllipsis)."
+    }
+  ]}
+/>
+
+
+

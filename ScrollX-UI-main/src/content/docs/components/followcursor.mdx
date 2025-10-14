@@ -1,0 +1,99 @@
+---
+title: Follow Cursor
+description:  Colorful, fluid cursor trails that respond to mouse movement
+---
+
+<ComponentPreview name="followcursor-demo" className="p-0" description="" />
+
+## Installation
+
+<Tabs defaultValue="cli" className="w-full">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <PkgOptions name="followcursor" />
+  </TabsContent>
+  <TabsContent value="manual">
+    <Steps>
+
+<Step>Install the following dependencies:</Step>
+<DepsOptions name="ogl" />
+
+<Step>Copy and paste the following code into your project.</Step>
+<p>
+  <code>followcursor.tsx</code>
+</p>
+<ComponentSource name="followcursor" />
+
+</Steps>
+  </TabsContent>
+</Tabs>
+
+## Usage
+
+```tsx
+import Followcursor from "@/components/ui/followcursor";
+```
+
+```tsx
+<Followcursor
+  className="my-custom-class"
+  style={{ height: "400px" }}
+  colors={["#FF6B6B", "#4ECDC4", "#3A86FF"]}
+  thickness={{ min: 20, max: 80 }}
+  count={{ min: 10, max: 20 }}
+  bgColor="rgba(10, 10, 20, 0.9)"
+/>
+```
+
+## API Reference
+
+### FollowCursor
+
+The `FollowCursor` component creates beautiful, fluid lines that follow the user's cursor with smooth animation. It uses **WebGL** for high-performance rendering and provides a visually engaging interactive element.
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      prop: "className",
+      type: "string",
+      default: "—",
+      description: "Optional CSS class for the outer container."
+    },
+    {
+      prop: "style",
+      type: "React.CSSProperties",
+      default: "—",
+      description: "Inline styles for the container."
+    },
+    {
+      prop: "colors",
+      type: "string[]",
+      default: "10 preset vibrant colors",
+      description: "Hex color strings for the lines."
+    },
+    {
+      prop: "thickness",
+      type: "{ min: number; max: number }",
+      default: "{ min: 30, max: 100 }",
+      description: "Line thickness range."
+    },
+    {
+      prop: "count",
+      type: "{ min: number; max: number }",
+      default: "{ min: 15, max: 25 }",
+      description: "Range of points per line."
+    },
+    {
+      prop: "bgColor",
+      type: "string",
+      default: `"rgba(26, 26, 38, 1)"`,
+      description: "Background color of the canvas."
+    }
+  ]}
+/>
+
