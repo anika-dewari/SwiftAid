@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { BackgroundPaths } from "@/components/ui/background-paths";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,9 +17,7 @@ import {
   Clock,
   CheckCircle,
   ArrowLeft,
-  ArrowUpRight,
 } from "lucide-react";
-import { Announcement, AnnouncementTag, AnnouncementTitle } from "@/components/ui/announcement";
 import Link from "next/link";
 
 export default function EmergencyPortal() {
@@ -91,30 +90,43 @@ export default function EmergencyPortal() {
         </div>
       </div>
 
-      <div className="container mx-auto p-6 max-w-4xl">
-        {/* Critical Emergency Announcement */}
+      {/* Emergency Tech Hero */}
+      <BackgroundPaths 
+        className="h-[50vh] flex items-center justify-center w-full flex-col px-4 mb-8"
+        svgOptions={{ duration: 6 }}
+      >
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-6"
+          transition={{ duration: 1, delay: 0.2 }}
+          className="text-center"
         >
-          <Announcement variant="emergency" movingBorder>
-            <AnnouncementTag variant="emergency" lustre>
-              PRIORITY ALERT
-            </AnnouncementTag>
-            <AnnouncementTitle>
-              High traffic volume detected - Average response time: 6.2 minutes
-              <Clock className="shrink-0 text-red-500" size={16} />
-            </AnnouncementTitle>
-          </Announcement>
+          <h2 className="bg-clip-text text-transparent text-center bg-gradient-to-b from-red-600 to-orange-600 dark:from-red-400 dark:to-orange-400 text-2xl md:text-4xl lg:text-6xl font-sans py-2 md:py-6 relative z-20 font-bold tracking-tight">
+            Critical Response, <br /> Advanced Systems.
+          </h2>
+          <p className="max-w-2xl mx-auto text-sm md:text-lg text-neutral-700 dark:text-neutral-300 text-center mb-6">
+            Every second counts. Our intelligent dispatch system connects you 
+            to the nearest available emergency resources in real-time.
+          </p>
+          
+          <div className="flex items-center justify-center space-x-6">
+            <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
+              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="font-semibold">LIVE TRACKING</span>
+            </div>
+            <div className="flex items-center space-x-2 text-green-600 dark:text-green-400">
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="font-semibold">AI DISPATCH</span>
+            </div>
+          </div>
         </motion.div>
+      </BackgroundPaths>
 
+      <div className="container mx-auto p-6 max-w-4xl">
         {/* Progress Indicator */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
           className="mb-8"
         >
           <div className="flex justify-center space-x-4 mb-4">

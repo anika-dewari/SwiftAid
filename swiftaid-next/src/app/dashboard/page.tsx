@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { BackgroundPaths } from "@/components/ui/background-paths";
 import {
   Activity,
   Ambulance,
@@ -14,9 +15,7 @@ import {
   CheckCircle,
   TrendingUp,
   Phone,
-  ArrowUpRight,
 } from "lucide-react";
-import { Announcement, AnnouncementTag, AnnouncementTitle } from "@/components/ui/announcement";
 import Link from "next/link";
 
 export default function Dashboard() {
@@ -111,50 +110,44 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Emergency Announcements */}
+      {/* Hero Section with Background Paths */}
+      <BackgroundPaths 
+        className="h-[60vh] flex items-center justify-center w-full flex-col px-4"
+        svgOptions={{ duration: 8 }}
+      >
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="space-y-3"
+          transition={{ duration: 1, delay: 0.2 }}
+          className="text-center"
         >
-          <Announcement variant="emergency" movingBorder>
-            <AnnouncementTag variant="emergency" lustre>
-              LIVE ALERT
-            </AnnouncementTag>
-            <AnnouncementTitle>
-              Major incident reported - 3 ambulances dispatched to Highway 101
-              <ArrowUpRight className="shrink-0 text-red-500" size={16} />
-            </AnnouncementTitle>
-          </Announcement>
+          <h2 className="bg-clip-text text-transparent text-center bg-gradient-to-b from-neutral-900 to-neutral-700 dark:from-neutral-600 dark:to-white text-2xl md:text-4xl lg:text-7xl font-sans py-2 md:py-10 relative z-20 font-bold tracking-tight">
+            SwiftAid Intelligence, <br /> Emergency Systems.
+          </h2>
+          <p className="max-w-xl mx-auto text-sm md:text-lg text-neutral-700 dark:text-neutral-400 text-center mb-8">
+            Real-time monitoring, predictive analytics, and intelligent dispatch 
+            for next-generation emergency medical services.
+          </p>
           
-          <Announcement variant="success">
-            <AnnouncementTag variant="success" lustre>
-              System Update
-            </AnnouncementTag>
-            <AnnouncementTitle>
-              Response time improved by 15% with new routing algorithm
-              <CheckCircle className="shrink-0 text-green-500" size={16} />
-            </AnnouncementTitle>
-          </Announcement>
-          
-          <Announcement variant="info">
-            <AnnouncementTag variant="info">
-              Network Status
-            </AnnouncementTag>
-            <AnnouncementTitle>
-              All hospitals online - 24/7 monitoring active
-              <Activity className="shrink-0 text-blue-500" size={16} />
-            </AnnouncementTitle>
-          </Announcement>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" className="bg-blue-500 hover:bg-blue-600 text-white animate-pulse">
+              <Activity className="mr-2 h-5 w-5" />
+              Live Operations
+            </Button>
+            <Button size="lg" variant="outline" className="border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950">
+              <AlertTriangle className="mr-2 h-5 w-5" />
+              Emergency Alert
+            </Button>
+          </div>
         </motion.div>
+      </BackgroundPaths>
 
+      <div className="container mx-auto p-6 space-y-6">
         {/* Stats Grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.6 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {emergencyStats.map((stat, index) => (

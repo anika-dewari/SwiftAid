@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AnimatedButton } from "@/components/ui/animated-button";
 import { AnimatedTextGenerate } from "@/components/ui/animated-textgenerate";
 import BackgroundMeteors from "@/components/ui/backgroundmeteors";
-import { Announcement, AnnouncementTag, AnnouncementTitle } from "@/components/ui/announcement";
+import { BackgroundPaths } from "@/components/ui/background-paths";
 import { ModeToggle } from "@/components/mode-toggle";
 import { 
   Ambulance, 
@@ -20,9 +20,7 @@ import {
   Shield,
   ArrowRight,
   Phone,
-  Heart,
-  ArrowUpRight,
-  Zap
+  Heart
 } from "lucide-react";
 
 export default function Home() {
@@ -83,21 +81,6 @@ export default function Home() {
           </div>
         </div>
       </nav>
-
-      {/* Top Announcement */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 py-3">
-        <div className="container mx-auto px-4">
-          <Announcement movingBorder variant="info">
-            <AnnouncementTag variant="info" lustre>
-              Latest Update
-            </AnnouncementTag>
-            <AnnouncementTitle>
-              SwiftAid 2.0 launched - 25% faster response times with AI optimization
-              <ArrowUpRight className="shrink-0 text-blue-500" size={16} />
-            </AnnouncementTitle>
-          </Announcement>
-        </div>
-      </div>
 
       {/* Meteor Hero Section */}
       <BackgroundMeteors className="min-h-screen flex items-center justify-center">
@@ -348,6 +331,86 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Tech Innovation Section */}
+      <BackgroundPaths 
+        className="h-[70vh] flex items-center justify-center w-full flex-col px-4"
+        svgOptions={{ duration: 10 }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="text-center max-w-4xl mx-auto"
+        >
+          <h2 className="bg-clip-text text-transparent text-center bg-gradient-to-b from-neutral-900 to-neutral-700 dark:from-neutral-600 dark:to-white text-2xl md:text-4xl lg:text-6xl font-sans py-2 md:py-8 relative z-20 font-bold tracking-tight">
+            Next-Generation Emergency, <br /> Intelligent Dispatch.
+          </h2>
+          <p className="max-w-3xl mx-auto text-sm md:text-lg text-neutral-700 dark:text-neutral-400 text-center mb-8">
+            Powered by artificial intelligence, real-time data analytics, and 
+            machine learning algorithms that save precious seconds in critical emergencies.
+          </p>
+          
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.6, staggerChildren: 0.2 }}
+          >
+            {[
+              {
+                title: "AI Route Optimization",
+                description: "Machine learning algorithms calculate the fastest path in real-time",
+                icon: "🤖",
+                color: "from-blue-500 to-cyan-500"
+              },
+              {
+                title: "Predictive Analytics",  
+                description: "Forecast emergency patterns and pre-position resources strategically",
+                icon: "📊",
+                color: "from-purple-500 to-pink-500"
+              },
+              {
+                title: "Real-Time Coordination",
+                description: "Instant communication between dispatch, ambulances, and hospitals",
+                icon: "⚡",
+                color: "from-green-500 to-emerald-500"
+              }
+            ].map((tech, index) => (
+              <motion.div
+                key={tech.title}
+                className="relative p-6 rounded-xl bg-white/10 dark:bg-gray-800/20 backdrop-blur-sm border border-white/20 hover:bg-white/20 dark:hover:bg-gray-800/30 transition-all duration-300"
+                whileHover={{ scale: 1.05, y: -5 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
+              >
+                <div className={`text-4xl mb-4 p-3 rounded-lg bg-gradient-to-r ${tech.color} w-fit mx-auto text-white flex items-center justify-center`}>
+                  {tech.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{tech.title}</h3>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{tech.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <motion.div 
+            className="mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+          >
+            <Button size="lg" className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-3 text-lg shadow-xl">
+              <Activity className="mr-2 h-5 w-5" />
+              Experience the Technology
+            </Button>
+          </motion.div>
+        </motion.div>
+      </BackgroundPaths>
 
       {/* Emergency Banner */}
       <motion.section
