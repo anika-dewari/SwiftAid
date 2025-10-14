@@ -20,7 +20,10 @@ import {
   Shield,
   ArrowRight,
   Phone,
-  Heart
+  Heart,
+  Bot,
+  BarChart3,
+  Zap
 } from "lucide-react";
 
 export default function Home() {
@@ -363,19 +366,19 @@ export default function Home() {
               {
                 title: "AI Route Optimization",
                 description: "Machine learning algorithms calculate the fastest path in real-time",
-                icon: "🤖",
+                icon: Bot,
                 color: "from-blue-500 to-cyan-500"
               },
               {
                 title: "Predictive Analytics",  
                 description: "Forecast emergency patterns and pre-position resources strategically",
-                icon: "📊",
+                icon: BarChart3,
                 color: "from-purple-500 to-pink-500"
               },
               {
                 title: "Real-Time Coordination",
                 description: "Instant communication between dispatch, ambulances, and hospitals",
-                icon: "⚡",
+                icon: Zap,
                 color: "from-green-500 to-emerald-500"
               }
             ].map((tech, index) => (
@@ -388,8 +391,8 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
               >
-                <div className={`text-4xl mb-4 p-3 rounded-lg bg-gradient-to-r ${tech.color} w-fit mx-auto text-white flex items-center justify-center`}>
-                  {tech.icon}
+                <div className={`mb-4 p-4 rounded-lg bg-gradient-to-r ${tech.color} w-fit mx-auto text-white flex items-center justify-center`}>
+                  <tech.icon className="h-8 w-8" />
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{tech.title}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{tech.description}</p>
