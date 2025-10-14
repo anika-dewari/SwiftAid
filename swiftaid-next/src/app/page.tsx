@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AnimatedButton } from "@/components/ui/animated-button";
 import { AnimatedTextGenerate } from "@/components/ui/animated-textgenerate";
 import BackgroundMeteors from "@/components/ui/backgroundmeteors";
+import { Announcement, AnnouncementTag, AnnouncementTitle } from "@/components/ui/announcement";
 import { ModeToggle } from "@/components/mode-toggle";
 import { 
   Ambulance, 
@@ -19,7 +20,9 @@ import {
   Shield,
   ArrowRight,
   Phone,
-  Heart
+  Heart,
+  ArrowUpRight,
+  Zap
 } from "lucide-react";
 
 export default function Home() {
@@ -80,6 +83,21 @@ export default function Home() {
           </div>
         </div>
       </nav>
+
+      {/* Top Announcement */}
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 py-3">
+        <div className="container mx-auto px-4">
+          <Announcement movingBorder variant="info">
+            <AnnouncementTag variant="info" lustre>
+              Latest Update
+            </AnnouncementTag>
+            <AnnouncementTitle>
+              SwiftAid 2.0 launched - 25% faster response times with AI optimization
+              <ArrowUpRight className="shrink-0 text-blue-500" size={16} />
+            </AnnouncementTitle>
+          </Announcement>
+        </div>
+      </div>
 
       {/* Meteor Hero Section */}
       <BackgroundMeteors className="min-h-screen flex items-center justify-center">

@@ -16,7 +16,9 @@ import {
   Clock,
   CheckCircle,
   ArrowLeft,
+  ArrowUpRight,
 } from "lucide-react";
+import { Announcement, AnnouncementTag, AnnouncementTitle } from "@/components/ui/announcement";
 import Link from "next/link";
 
 export default function EmergencyPortal() {
@@ -90,10 +92,29 @@ export default function EmergencyPortal() {
       </div>
 
       <div className="container mx-auto p-6 max-w-4xl">
+        {/* Critical Emergency Announcement */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-6"
+        >
+          <Announcement variant="emergency" movingBorder>
+            <AnnouncementTag variant="emergency" lustre>
+              PRIORITY ALERT
+            </AnnouncementTag>
+            <AnnouncementTitle>
+              High traffic volume detected - Average response time: 6.2 minutes
+              <Clock className="shrink-0 text-red-500" size={16} />
+            </AnnouncementTitle>
+          </Announcement>
+        </motion.div>
+
         {/* Progress Indicator */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
           className="mb-8"
         >
           <div className="flex justify-center space-x-4 mb-4">

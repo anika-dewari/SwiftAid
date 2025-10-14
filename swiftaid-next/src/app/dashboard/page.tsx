@@ -14,7 +14,9 @@ import {
   CheckCircle,
   TrendingUp,
   Phone,
+  ArrowUpRight,
 } from "lucide-react";
+import { Announcement, AnnouncementTag, AnnouncementTitle } from "@/components/ui/announcement";
 import Link from "next/link";
 
 export default function Dashboard() {
@@ -110,11 +112,49 @@ export default function Dashboard() {
       </div>
 
       <div className="container mx-auto p-6 space-y-6">
+        {/* Emergency Announcements */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="space-y-3"
+        >
+          <Announcement variant="emergency" movingBorder>
+            <AnnouncementTag variant="emergency" lustre>
+              LIVE ALERT
+            </AnnouncementTag>
+            <AnnouncementTitle>
+              Major incident reported - 3 ambulances dispatched to Highway 101
+              <ArrowUpRight className="shrink-0 text-red-500" size={16} />
+            </AnnouncementTitle>
+          </Announcement>
+          
+          <Announcement variant="success">
+            <AnnouncementTag variant="success" lustre>
+              System Update
+            </AnnouncementTag>
+            <AnnouncementTitle>
+              Response time improved by 15% with new routing algorithm
+              <CheckCircle className="shrink-0 text-green-500" size={16} />
+            </AnnouncementTitle>
+          </Announcement>
+          
+          <Announcement variant="info">
+            <AnnouncementTag variant="info">
+              Network Status
+            </AnnouncementTag>
+            <AnnouncementTitle>
+              All hospitals online - 24/7 monitoring active
+              <Activity className="shrink-0 text-blue-500" size={16} />
+            </AnnouncementTitle>
+          </Announcement>
+        </motion.div>
+
         {/* Stats Grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {emergencyStats.map((stat, index) => (
