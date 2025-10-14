@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import 'leaflet/dist/leaflet.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -443,4 +444,30 @@ body {
 
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+/* Leaflet Map Custom Styles */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: transparent;
+}
+
+.custom-div-icon {
+  background: transparent;
+  border: none;
+}
+
+.custom-div-icon div {
+  transform: translate(-50%, -50%);
+}
+
+/* Fix for default markers */
+.leaflet-default-icon-path {
+  background-image: url('https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png');
+}
+
+/* Popup styles */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
 }

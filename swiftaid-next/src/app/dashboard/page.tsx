@@ -1,10 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle, CardAction, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
+import { Badge } from "@/components/ui/badge";
 import { BackgroundPaths } from "@/components/ui/background-paths";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import RealTimeMap from "@/components/ui/real-time-map";
+import EmergencyRequestHandler from "@/components/ui/emergency-request-handler";
+import AmbulanceAvailability from "@/components/ui/ambulance-availability";
 import {
   Activity,
   Ambulance,
@@ -16,40 +21,43 @@ import {
   CheckCircle,
   TrendingUp,
   Phone,
+  Map,
+  Settings,
+  BarChart3,
 } from "lucide-react";
 import Link from "next/link";
 
 export default function Dashboard() {
-  const { toast } = useToast();
-  
+  const [activeTab, setActiveTab] = useState("overview");
+
   const emergencyStats = [
     { 
       title: "Active Emergencies", 
-      value: "7", 
-      change: "+2 from last hour", 
+      value: "3", 
+      change: "+1 from last hour", 
       icon: AlertTriangle,
       color: "text-red-500",
       bgColor: "bg-red-50 dark:bg-red-950/20"
     },
     { 
       title: "Available Ambulances", 
-      value: "18/24", 
-      change: "75% capacity", 
+      value: "2/4", 
+      change: "50% capacity", 
       icon: Ambulance,
       color: "text-blue-500",
       bgColor: "bg-blue-50 dark:bg-blue-950/20"
     },
     { 
       title: "Response Time", 
-      value: "4.2min", 
-      change: "-0.8min from avg", 
+      value: "8.5min", 
+      change: "-1.2min from avg", 
       icon: Clock,
       color: "text-green-500",
       bgColor: "bg-green-50 dark:bg-green-950/20"
     },
     { 
       title: "Hospitals Online", 
-      value: "12/12", 
+      value: "15/15", 
       change: "100% network", 
       icon: Hospital,
       color: "text-purple-500",
@@ -58,17 +66,16 @@ export default function Dashboard() {
   ];
 
   const recentEmergencies = [
-    { id: "EMG-001", type: "Cardiac Arrest", location: "Downtown Plaza", status: "Dispatched", time: "2 min ago", severity: "Critical" },
-    { id: "EMG-002", type: "Traffic Accident", location: "Highway 101", status: "En Route", time: "5 min ago", severity: "Urgent" },
-    { id: "EMG-003", type: "Chest Pain", location: "Residential Area", status: "Completed", time: "12 min ago", severity: "Normal" },
-    { id: "EMG-004", type: "Fall Injury", location: "Shopping Mall", status: "Assigned", time: "15 min ago", severity: "Urgent" },
+    { id: "EMG001", type: "Cardiac Emergency", location: "Connaught Place", status: "assigned", time: "2 min ago", severity: "critical", ambulanceId: "AMB002" },
+    { id: "EMG002", type: "Traffic Accident", location: "India Gate", status: "pending", time: "5 min ago", severity: "urgent" },
+    { id: "EMG003", type: "Breathing Problems", location: "Red Fort", status: "en-route", time: "12 min ago", severity: "urgent", ambulanceId: "AMB001" },
   ];
 
   const ambulanceStatus = [
-    { id: "AMB-001", driver: "John Smith", status: "Available", location: "Station A", lastUpdate: "1 min ago" },
-    { id: "AMB-002", driver: "Sarah Johnson", status: "En Route", location: "Main St & 5th", lastUpdate: "3 min ago" },
-    { id: "AMB-003", driver: "Mike Wilson", status: "At Hospital", location: "Central Medical", lastUpdate: "8 min ago" },
-    { id: "AMB-004", driver: "Lisa Brown", status: "Available", location: "Station B", lastUpdate: "2 min ago" },
+    { id: "AMB001", driver: "Rajesh Kumar", status: "En Route", location: "Near Red Fort", lastUpdate: "1 min ago" },
+    { id: "AMB002", driver: "Priya Sharma", status: "Assigned", location: "En route to CP", lastUpdate: "3 min ago" },
+    { id: "AMB003", driver: "Amit Singh", status: "Maintenance", location: "Service Center", lastUpdate: "8 min ago" },
+    { id: "AMB004", driver: "Sunita Devi", status: "Available", location: "South Delhi Station", lastUpdate: "2 min ago" },
   ];
 
   const getStatusColor = (status: string) => {
@@ -76,15 +83,189 @@ export default function Dashboard() {
       case "critical": return "bg-red-500";
       case "urgent": return "bg-orange-500";
       case "normal": return "bg-green-500";
-      case "dispatched": return "bg-blue-500";
-      case "en route": return "bg-yellow-500";
+      case "assigned": return "bg-blue-500";
+      case "pending": return "bg-red-500";
+      case "en-route": return "bg-yellow-500";
       case "completed": return "bg-gray-500";
-      case "assigned": return "bg-purple-500";
       case "available": return "bg-green-500";
-      case "at hospital": return "bg-blue-500";
+      case "maintenance": return "bg-red-500";
       default: return "bg-gray-500";
     }
   };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case "critical": return "text-red-600";
+      case "urgent": return "text-orange-600";
+      case "normal": return "text-yellow-600";
+      default: return "text-gray-600";
+    }
+  };
+
+  const OverviewTab = () => (
+    <div className="space-y-6">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {emergencyStats.map((stat, index) => (
+          <motion.div
+            key={stat.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+          >
+            <Card className="bg-white/50 backdrop-blur-sm border-white/20 hover:shadow-lg transition-shadow duration-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
+                    <p className="text-3xl font-bold">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
+                  </div>
+                  <div className={`p-3 rounded-lg ${stat.bgColor}`}>
+                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Emergency Calls */}
+        <Card className="lg:col-span-2 bg-white/50 backdrop-blur-sm border-white/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Recent Emergency Calls
+            </CardTitle>
+            <CardDescription>Latest emergency requests and their status</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentEmergencies.map((emergency) => (
+                <div key={emergency.id} className="flex items-center justify-between p-4 border rounded-lg bg-white/30">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium">{emergency.id}</span>
+                        <Badge className={`${getStatusColor(emergency.status)} text-white`}>
+                          {emergency.status}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <MapPin className="h-3 w-3" />
+                        {emergency.location}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        <span className="capitalize">{emergency.type}</span>
+                        {emergency.ambulanceId && (
+                          <span className="ml-2 text-blue-600">• {emergency.ambulanceId}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm text-muted-foreground">{emergency.time}</span>
+                    <span className={`text-sm font-medium ${getSeverityColor(emergency.severity)}`}>
+                      {emergency.severity}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card className="bg-white/50 backdrop-blur-sm border-white/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription>Navigate to key dispatcher functions</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-3 h-auto p-3"
+              onClick={() => setActiveTab("requests")}
+            >
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              <div className="text-left">
+                <div className="font-medium">Emergency Requests</div>
+                <div className="text-sm text-muted-foreground">Manage incoming calls</div>
+              </div>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-3 h-auto p-3"
+              onClick={() => setActiveTab("tracking")}
+            >
+              <Map className="h-5 w-5 text-blue-500" />
+              <div className="text-left">
+                <div className="font-medium">Real-Time Tracking</div>
+                <div className="text-sm text-muted-foreground">Monitor ambulance locations</div>
+              </div>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-3 h-auto p-3"
+              onClick={() => setActiveTab("fleet")}
+            >
+              <Ambulance className="h-5 w-5 text-green-500" />
+              <div className="text-left">
+                <div className="font-medium">Fleet Management</div>
+                <div className="text-sm text-muted-foreground">Update ambulance status</div>
+              </div>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-3 h-auto p-3"
+            >
+              <BarChart3 className="h-5 w-5 text-purple-500" />
+              <div className="text-left">
+                <div className="font-medium">Analytics</div>
+                <div className="text-sm text-muted-foreground">View performance metrics</div>
+              </div>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Ambulance Status Overview */}
+      <Card className="bg-white/50 backdrop-blur-sm border-white/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Ambulance className="h-5 w-5 text-blue-500" />
+            Ambulance Fleet Status
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {ambulanceStatus.map((ambulance) => (
+              <div key={ambulance.id} className="p-3 rounded-lg border bg-white/30">
+                <div className="flex items-center space-x-2 mb-1">
+                  <span className="font-medium">{ambulance.id}</span>
+                  <span className={`w-2 h-2 rounded-full ${getStatusColor(ambulance.status)}`} />
+                </div>
+                <p className="text-sm font-medium">{ambulance.driver}</p>
+                <p className="text-xs text-muted-foreground">{ambulance.location}</p>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-sm font-medium">{ambulance.status}</p>
+                  <p className="text-xs text-muted-foreground">{ambulance.lastUpdate}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
@@ -146,290 +327,42 @@ export default function Dashboard() {
       </BackgroundPaths>
 
       <div className="container mx-auto p-6 space-y-6">
-        {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {emergencyStats.map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-            >
-              <Card className="bg-white/50 backdrop-blur-sm border-white/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                      <p className="text-3xl font-bold">{stat.value}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
-                    </div>
-                    <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                      <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              <span className="hidden sm:inline">Overview</span>
+            </TabsTrigger>
+            <TabsTrigger value="requests" className="flex items-center gap-2">
+              <Phone className="w-4 h-4" />
+              <span className="hidden sm:inline">Requests</span>
+            </TabsTrigger>
+            <TabsTrigger value="tracking" className="flex items-center gap-2">
+              <Map className="w-4 h-4" />
+              <span className="hidden sm:inline">Tracking</span>
+            </TabsTrigger>
+            <TabsTrigger value="fleet" className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              <span className="hidden sm:inline">Fleet</span>
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Emergencies */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <Card className="bg-white/50 backdrop-blur-sm border-white/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2">
-                  <AlertTriangle className="h-5 w-5 text-red-500" />
-                  <span>Recent Emergencies</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {recentEmergencies.map((emergency) => (
-                  <div key={emergency.id} className="flex items-center justify-between p-3 rounded-lg border bg-white/30">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-medium">{emergency.id}</span>
-                        <span className={`px-2 py-1 text-xs rounded-full text-white ${getStatusColor(emergency.severity)}`}>
-                          {emergency.severity}
-                        </span>
-                      </div>
-                      <p className="text-sm font-medium">{emergency.type}</p>
-                      <p className="text-xs text-muted-foreground">{emergency.location}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className={`text-xs px-2 py-1 rounded-full ${getStatusColor(emergency.status)} text-white`}>
-                        {emergency.status}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">{emergency.time}</p>
-                    </div>
-                  </div>
-                ))}
-                <Button variant="outline" className="w-full mt-4">
-                  View All Emergencies
-                </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <TabsContent value="overview" className="space-y-6">
+            <OverviewTab />
+          </TabsContent>
 
-          {/* Ambulance Status */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <Card className="bg-white/50 backdrop-blur-sm border-white/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2">
-                  <Ambulance className="h-5 w-5 text-blue-500" />
-                  <span>Ambulance Fleet</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {ambulanceStatus.map((ambulance) => (
-                  <div key={ambulance.id} className="flex items-center justify-between p-3 rounded-lg border bg-white/30">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-medium">{ambulance.id}</span>
-                        <span className={`w-2 h-2 rounded-full ${getStatusColor(ambulance.status)}`} />
-                      </div>
-                      <p className="text-sm font-medium">{ambulance.driver}</p>
-                      <p className="text-xs text-muted-foreground">{ambulance.location}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">{ambulance.status}</p>
-                      <p className="text-xs text-muted-foreground">{ambulance.lastUpdate}</p>
-                    </div>
-                  </div>
-                ))}
-                <Button variant="outline" className="w-full mt-4">
-                  Manage Fleet
-                </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
+          <TabsContent value="requests" className="space-y-6">
+            <EmergencyRequestHandler />
+          </TabsContent>
 
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <Card className="bg-white/50 backdrop-blur-sm border-white/20">
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Button variant="outline" className="h-16 flex-col space-y-2">
-                  <MapPin className="h-5 w-5" />
-                  <span className="text-sm">View Map</span>
-                </Button>
-                <Button variant="outline" className="h-16 flex-col space-y-2">
-                  <Users className="h-5 w-5" />
-                  <span className="text-sm">Manage Drivers</span>
-                </Button>
-                <Button variant="outline" className="h-16 flex-col space-y-2">
-                  <Hospital className="h-5 w-5" />
-                  <span className="text-sm">Hospital Network</span>
-                </Button>
-                <Button variant="outline" className="h-16 flex-col space-y-2">
-                  <Activity className="h-5 w-5" />
-                  <span className="text-sm">Analytics</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+          <TabsContent value="tracking" className="space-y-6">
+            <RealTimeMap height="70vh" showSidebar={true} />
+          </TabsContent>
 
-        {/* Enhanced Cards Section - Active Incidents */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-8"
-        >
-          <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-            Active Emergency Incidents
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                id: "EMG-2024-001",
-                title: "Cardiac Emergency - Downtown",
-                description: "Male, 45, chest pain and shortness of breath. Ambulance dispatched.",
-                priority: "Critical",
-                eta: "4 min",
-                location: "123 Main St, Downtown",
-                ambulanceId: "AMB-007",
-                rating: 4.9,
-                driver: "Sarah Johnson"
-              },
-              {
-                id: "EMG-2024-002", 
-                title: "Vehicle Accident - Highway 101",
-                description: "Multi-vehicle collision with possible injuries. Emergency response en route.",
-                priority: "High",
-                eta: "7 min",
-                location: "Highway 101, Mile 15",
-                ambulanceId: "AMB-003", 
-                rating: 4.8,
-                driver: "Michael Rodriguez"
-              },
-              {
-                id: "EMG-2024-003",
-                title: "Fall Injury - Senior Center", 
-                description: "Elderly patient with suspected hip fracture. Stable condition.",
-                priority: "Moderate",
-                eta: "12 min",
-                location: "Golden Years Center",
-                ambulanceId: "AMB-011",
-                rating: 4.7,
-                driver: "Emily Watson"
-              }
-            ].map((incident) => {
-              const handleAddToWatchlist = () => {
-                toast(`${incident.title} added to watchlist!`, { 
-                  duration: 2000,
-                  type: "success"
-                });
-              };
-
-              const getPriorityColor = (priority: string) => {
-                switch (priority) {
-                  case "Critical": return "bg-red-500";
-                  case "High": return "bg-orange-500";
-                  case "Moderate": return "bg-yellow-500";
-                  default: return "bg-gray-500";
-                }
-              };
-
-              return (
-                <Card key={incident.id} className="w-full hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader className="flex flex-col gap-1 px-4 py-2">
-                    <div className="flex items-start w-full">
-                      <CardTitle className="text-lg font-semibold">
-                        {incident.title}
-                      </CardTitle>
-                      <CardAction className="ml-auto">
-                        <Button
-                          variant="link"
-                          size="sm"
-                          className="p-0 hover:underline text-blue-600"
-                          onClick={handleAddToWatchlist}
-                        >
-                          Add to Watchlist
-                        </Button>
-                      </CardAction>
-                    </div>
-                    <CardDescription className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      {incident.description}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="pt-0 flex flex-col gap-3 px-4">
-                    {/* Priority Badge */}
-                    <div className="flex items-center gap-2">
-                      <div className={`px-2 py-1 rounded-full text-white text-xs font-medium ${getPriorityColor(incident.priority)}`}>
-                        {incident.priority} Priority
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300">
-                        <Clock className="w-4 h-4 text-blue-500" />
-                        <span>ETA: {incident.eta}</span>
-                      </div>
-                    </div>
-
-                    {/* Ambulance Info */}
-                    <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
-                      <Ambulance className="w-4 h-4 text-blue-500" />
-                      <span className="font-medium">{incident.ambulanceId}</span>
-                      <span>•</span>
-                      <span>{incident.driver}</span>
-                    </div>
-
-                    {/* Location and Rating */}
-                    <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4 text-green-500" />
-                        <span className="truncate">{incident.location}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <CheckCircle className="w-4 h-4 text-yellow-500" />
-                        <span>{incident.rating}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-
-                  <CardFooter className="flex justify-between items-center px-4 py-3">
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
-                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                      <span>Live Tracking</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="text-xs">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        Track
-                      </Button>
-                      <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white text-xs">
-                        <Phone className="w-3 h-3 mr-1" />
-                        Contact
-                      </Button>
-                    </div>
-                  </CardFooter>
-                </Card>
-              );
-            })}
-          </div>
-        </motion.div>
+          <TabsContent value="fleet" className="space-y-6">
+            <AmbulanceAvailability />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
