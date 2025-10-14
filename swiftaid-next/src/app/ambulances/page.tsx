@@ -9,6 +9,16 @@ import { GradientText } from "@/components/ui/gradient-text";
 import { FloatingCard } from "@/components/ui/floating-card";
 import { ModeToggle } from "@/components/mode-toggle";
 import {
+  CardFlip,
+  CardFlipFront,
+  CardFlipBack,
+  CardFlipHeader,
+  CardFlipFooter,
+  CardFlipTitle,
+  CardFlipDescription,
+  CardFlipContent,
+} from "@/components/ui/card-flip";
+import {
   Ambulance,
   MapPin,
   Users,
@@ -22,6 +32,7 @@ import {
   ArrowLeft,
   Filter,
   Search,
+  Shield,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -353,6 +364,188 @@ export default function AmbulanceManagement() {
               </motion.div>
             );
           })}
+        </motion.div>
+
+        {/* Featured Ambulances - Card Flip Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-12"
+        >
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            <GradientText from="purple-500" to="pink-500">
+              Featured Fleet - Interactive View
+            </GradientText>
+          </h2>
+          <p className="text-center text-muted-foreground mb-8">
+            Click on any ambulance card to view detailed specifications and equipment
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {ambulances.slice(0, 3).map((ambulance, index) => (
+              <motion.div
+                key={`flip-${ambulance.id}`}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+              >
+                <CardFlip className="w-full max-w-sm mx-auto select-none">
+                  <CardFlipFront className="flex flex-col justify-between h-auto">
+                    {/* Ambulance Image */}
+                    <div className="mx-4 h-48 w-[calc(100%-2rem)] rounded-lg overflow-hidden bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900 to-green-900 flex items-center justify-center">
+                      <div className="text-center">
+                        <Ambulance className="h-20 w-20 text-blue-500 mx-auto mb-2" />
+                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{ambulance.vehicle}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Status and Rating */}
+                    <div className="flex items-center justify-between px-4 mt-4">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full text-white ${getStatusColor(ambulance.status)}`}>
+                        {ambulance.status.replace("-", " ").toUpperCase()}
+                      </span>
+                      <div className="flex items-center space-x-1 text-sm font-medium text-primary/70">
+                        <Activity className="w-4 h-4 text-green-500" />
+                        <span>{ambulance.responseTime} avg</span>
+                      </div>
+                    </div>
+
+                    <CardFlipHeader>
+                      <CardFlipTitle>{ambulance.id} - {ambulance.vehicle}</CardFlipTitle>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Driver: {ambulance.driver}
+                      </p>
+                      <p className="text-sm text-muted-foreground flex items-center">
+                        <MapPin className="w-4 h-4 mr-1" />
+                        {ambulance.location}
+                      </p>
+                    </CardFlipHeader>
+
+                    <CardFlipContent className="flex-1 px-4">
+                      {/* Fuel Level */}
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm">Fuel Level</span>
+                          <span className="text-sm font-medium">{ambulance.fuel}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full transition-all duration-300 ${
+                              ambulance.fuel > 60 ? "bg-green-500" : 
+                              ambulance.fuel > 30 ? "bg-yellow-500" : "bg-red-500"
+                            }`}
+                            style={{ width: `${ambulance.fuel}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Quick Stats */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="text-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
+                          <p className="text-lg font-bold text-blue-600">{ambulance.totalCalls}</p>
+                          <p className="text-xs text-muted-foreground">Calls</p>
+                        </div>
+                        <div className="text-center p-2 bg-green-50 dark:bg-green-900/20 rounded">
+                          <p className="text-lg font-bold text-green-600">{ambulance.responseTime}</p>
+                          <p className="text-xs text-muted-foreground">Response</p>
+                        </div>
+                      </div>
+                    </CardFlipContent>
+
+                    <CardFlipFooter className="flex gap-4 items-stretch">
+                      <button className="flex-1 bg-primary py-2 text-primary-foreground px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center text-sm">
+                        <Phone className="w-4 h-4 mr-2" />
+                        Contact Driver
+                      </button>
+                      <button className="w-12 bg-primary py-2 text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center">
+                        <MapPin className="w-4 h-4" />
+                      </button>
+                    </CardFlipFooter>
+                  </CardFlipFront>
+
+                  <CardFlipBack className="h-full flex flex-col">
+                    <CardFlipHeader>
+                      <CardFlipTitle>{ambulance.id} Specifications</CardFlipTitle>
+                      <CardFlipDescription>
+                        Advanced life support ambulance with full medical equipment
+                      </CardFlipDescription>
+                    </CardFlipHeader>
+
+                    <CardFlipContent className="flex-1 overflow-auto space-y-4">
+                      {/* Equipment Details */}
+                      <div className="flex items-start gap-3">
+                        <Heart className="text-red-500 w-5 h-5 mt-1" />
+                        <div>
+                          <h4 className="font-semibold">Life Support</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Defibrillator, oxygen, IV equipment
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <Activity className="text-blue-500 w-5 h-5 mt-1" />
+                        <div>
+                          <h4 className="font-semibold">Monitoring</h4>
+                          <p className="text-sm text-muted-foreground">
+                            ECG, blood pressure, pulse oximetry
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <Shield className="text-green-500 w-5 h-5 mt-1" />
+                        <div>
+                          <h4 className="font-semibold">Safety Systems</h4>
+                          <p className="text-sm text-muted-foreground">
+                            GPS tracking, emergency beacons
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <Users className="text-purple-500 w-5 h-5 mt-1" />
+                        <div>
+                          <h4 className="font-semibold">Capacity</h4>
+                          <p className="text-sm text-muted-foreground">
+                            2 EMTs, 1 patient, 1 attendant
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <Clock className="text-orange-500 w-5 h-5 mt-1" />
+                        <div>
+                          <h4 className="font-semibold">Service Hours</h4>
+                          <p className="text-sm text-muted-foreground">
+                            24/7 availability, last service: {ambulance.lastUpdate}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Performance Metrics */}
+                      <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-lg">
+                        <h4 className="font-semibold text-sm mb-2">Performance Metrics</h4>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>Response Time: <span className="font-medium">{ambulance.responseTime}</span></div>
+                          <div>Total Calls: <span className="font-medium">{ambulance.totalCalls}</span></div>
+                          <div>Fuel Efficiency: <span className="font-medium">Excellent</span></div>
+                          <div>Uptime: <span className="font-medium">99.2%</span></div>
+                        </div>
+                      </div>
+                    </CardFlipContent>
+
+                    <CardFlipFooter className="border-t pt-4">
+                      <p className="text-xs text-muted-foreground">
+                        Click anywhere to flip back • Last updated: {ambulance.lastUpdate}
+                      </p>
+                    </CardFlipFooter>
+                  </CardFlipBack>
+                </CardFlip>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
 
         {/* Selected Ambulance Details */}
