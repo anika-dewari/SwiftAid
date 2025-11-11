@@ -1,4 +1,4 @@
-// File: C:\Users\RITIKA BISHT\Desktop\Swift_Aid\swiftaid-next\src\app\dashboard\page.tsx
+// File: /Users/gewu/Documents/GitHub/SwiftAid/swiftaid-next/src/app/dashboard/page.tsx
 import * as entry from '../../../../src/app/dashboard/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

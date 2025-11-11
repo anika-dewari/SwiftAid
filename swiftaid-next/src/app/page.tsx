@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -23,10 +25,42 @@ import {
   Heart,
   Bot,
   BarChart3,
-  Zap
+  Zap,
+  LogIn,
+  UserPlus
 } from "lucide-react";
 
 export default function Home() {
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    
+    if (token && userData) {
+      setIsAuthenticated(true);
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  const handleDashboardClick = () => {
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    // Redirect based on role
+    if (user?.role === 'driver') {
+      router.push('/driver/dashboard');
+    } else if (user?.role === 'admin') {
+      router.push('/admin/dashboard');
+    } else {
+      router.push('/user/dashboard');
+    }
+  };
   const stats = [
     { icon: Ambulance, label: "Active Ambulances", value: "24", color: "text-blue-500" },
     { icon: Hospital, label: "Connected Hospitals", value: "12", color: "text-green-500" },
@@ -65,21 +99,37 @@ export default function Home() {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Button asChild className="hover-lift">
-              <Link href="/dashboard">Dashboard</Link>
-            </Button>
-            <Button asChild className="hover-lift">
-              <Link href="/emergency">Emergency Portal</Link>
-            </Button>
-            <Button asChild className="hover-lift">
-              <Link href="/about">About Us</Link>
-            </Button>
-            <AnimatedButton animation="glow" className="animate-heartbeat bg-red-500 hover:bg-red-600 text-white">
-              <Link href="/emergency" className="flex items-center">
-                <Phone className="mr-2 h-4 w-4" />
-                Emergency
-              </Link>
-            </AnimatedButton>
+            {isAuthenticated ? (
+              <>
+                <Button onClick={handleDashboardClick} className="hover-lift">
+                  Dashboard
+                </Button>
+                <Button asChild className="hover-lift">
+                  <Link href="/emergency">Emergency Portal</Link>
+                </Button>
+                <AnimatedButton animation="glow" className="animate-heartbeat bg-red-500 hover:bg-red-600 text-white">
+                  <Link href="/emergency" className="flex items-center">
+                    <Phone className="mr-2 h-4 w-4" />
+                    Emergency
+                  </Link>
+                </AnimatedButton>
+              </>
+            ) : (
+              <>
+                <Button asChild variant="outline" className="hover-lift">
+                  <Link href="/auth/login" className="flex items-center">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Login
+                  </Link>
+                </Button>
+                <Button asChild className="hover-lift bg-red-500 hover:bg-red-600">
+                  <Link href="/auth/register" className="flex items-center">
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Sign Up
+                  </Link>
+                </Button>
+              </>
+            )}
             <ModeToggle />
           </div>
         </div>
