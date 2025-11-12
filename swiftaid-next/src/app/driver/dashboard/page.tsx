@@ -41,6 +41,7 @@ export default function DriverDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -53,7 +54,12 @@ export default function DriverDashboard() {
 
     const parsedUser = JSON.parse(userData);
     if (parsedUser.role !== 'driver') {
-      router.push('/dashboard');
+      // Redirect non-drivers to appropriate dashboard
+      if (parsedUser.role === 'admin') {
+        router.push('/dashboard');
+      } else {
+        router.push('/user/dashboard');
+      }
       return;
     }
 
@@ -93,9 +99,26 @@ export default function DriverDashboard() {
         const data = await response.json();
         setProfile(data.driver);
         setStatus(data.driver.status);
+      } else {
+        const errorData = await response.json();
+        
+        // If token is invalid, clear localStorage and redirect to login
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          router.push('/auth/login');
+          return;
+        }
+        
+        setError(errorData.message || 'Failed to load driver profile');
+        console.error('Profile fetch error:', errorData);
+        setProfile({}); // Stop loading
       }
     } catch (error) {
       console.error('Failed to fetch profile:', error);
+      setError('Unable to connect to server. Please check if backend is running.');
+      // Set empty profile to stop loading
+      setProfile({});
     }
   };
 
@@ -198,7 +221,19 @@ export default function DriverDashboard() {
   };
 
   if (!profile) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <div className="text-xl">Loading driver dashboard...</div>
+        {error && (
+          <Alert variant="destructive" className="max-w-md">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        {error && (
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        )}
+      </div>
+    );
   }
 
   return (

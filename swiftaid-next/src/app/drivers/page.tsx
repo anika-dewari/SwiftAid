@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AnimatedButton } from "@/components/ui/animated-button";
@@ -30,8 +31,31 @@ import {
 import Link from "next/link";
 
 export default function DriverManagement() {
+  const router = useRouter();
   const [selectedDriver, setSelectedDriver] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  // Admin route protection
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+
+    if (!token || !userData) {
+      router.push('/auth/login');
+      return;
+    }
+
+    const user = JSON.parse(userData);
+    
+    // Only admin users can access driver management
+    if (user.role !== 'admin') {
+      if (user.role === 'driver') {
+        router.push('/driver/dashboard');
+      } else {
+        router.push('/user/dashboard');
+      }
+    }
+  }, [router]);
 
   const drivers = [
     {

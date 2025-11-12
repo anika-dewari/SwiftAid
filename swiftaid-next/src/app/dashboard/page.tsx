@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,31 @@ import {
 import Link from "next/link";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
+
+  // Admin route protection
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+
+    if (!token || !userData) {
+      router.push('/auth/login');
+      return;
+    }
+
+    const user = JSON.parse(userData);
+    
+    // Only admin users can access this dashboard
+    if (user.role !== 'admin') {
+      // Redirect to role-specific dashboard
+      if (user.role === 'driver') {
+        router.push('/driver/dashboard');
+      } else {
+        router.push('/user/dashboard');
+      }
+    }
+  }, [router]);
 
   const emergencyStats = [
     { 

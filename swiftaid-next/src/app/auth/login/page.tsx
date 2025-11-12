@@ -21,10 +21,14 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('=== LOGIN FORM SUBMITTED ===');
+    console.log('Form data:', formData);
+    
     setError('');
     setLoading(true);
 
     try {
+      console.log('Sending POST request to backend...');
       const response = await fetch('http://localhost:5001/api/auth/login', {
         method: 'POST',
         headers: {
@@ -33,7 +37,9 @@ export default function LoginPage() {
         body: JSON.stringify(formData),
       });
 
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
@@ -43,15 +49,21 @@ export default function LoginPage() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
+      console.log('Login successful, user role:', data.user.role);
+
       // Redirect based on role
       if (data.user.role === 'driver') {
-        router.push('/driver/dashboard');
+        console.log('Redirecting to driver dashboard...');
+        window.location.href = '/driver/dashboard';
       } else if (data.user.role === 'admin') {
-        router.push('/dashboard');
+        console.log('Redirecting to admin dashboard...');
+        window.location.href = '/dashboard'; // Admin sees main dashboard with ambulances, hospitals, etc.
       } else {
-        router.push('/user/dashboard');
+        console.log('Redirecting to user dashboard...');
+        window.location.href = '/user/dashboard'; // Regular users see only driver availability
       }
     } catch (err: any) {
+      console.error('Login error:', err);
       setError(err.message || 'Failed to login');
     } finally {
       setLoading(false);

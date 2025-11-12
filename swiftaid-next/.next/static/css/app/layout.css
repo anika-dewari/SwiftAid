@@ -2121,6 +2121,9 @@ video {
 .ease-in-out{
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
+.running{
+  animation-play-state: running;
+}
 .\[filter\:drop-shadow\(0px_1px_3px_rgba\(27\2c _37\2c _80\2c _0\.14\)\)\]{
   filter: drop-shadow(0px 1px 3px rgba(27, 37, 80, 0.14));
 }
