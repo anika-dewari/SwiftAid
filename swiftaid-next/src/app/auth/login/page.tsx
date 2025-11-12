@@ -47,9 +47,9 @@ export default function LoginPage() {
       if (data.user.role === 'driver') {
         router.push('/driver/dashboard');
       } else if (data.user.role === 'admin') {
-        router.push('/admin/dashboard');
-      } else {
         router.push('/dashboard');
+      } else {
+        router.push('/user/dashboard');
       }
     } catch (err: any) {
       setError(err.message || 'Failed to login');

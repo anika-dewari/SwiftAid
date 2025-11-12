@@ -71,7 +71,7 @@ export default function RegisterPage() {
       if (role === 'driver') {
         router.push('/driver/dashboard');
       } else {
-        router.push('/dashboard');
+        router.push('/user/dashboard');
       }
     } catch (err: any) {
       setError(err.message || 'Failed to register');
