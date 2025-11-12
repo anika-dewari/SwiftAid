@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   AlertTriangle,
   Ambulance,
@@ -17,12 +18,15 @@ import {
   Clock,
   CheckCircle,
   ArrowLeft,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 
 export default function EmergencyPortal() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState("");
   const [formData, setFormData] = useState({
     patientName: "",
     phone: "",
@@ -33,6 +37,8 @@ export default function EmergencyPortal() {
     allergies: "",
     medications: "",
     emergencyContact: "",
+    latitude: null as number | null,
+    longitude: null as number | null,
   });
 
   const emergencyTypes = [
@@ -59,6 +65,73 @@ export default function EmergencyPortal() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleUseCurrentLocation = () => {
+    setLocationLoading(true);
+    setLocationError("");
+
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      setLocationLoading(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        try {
+          // Use reverse geocoding to get address
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await response.json();
+          
+          const address = data.display_name || `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+          
+          setFormData(prev => ({
+            ...prev,
+            location: address,
+            latitude,
+            longitude,
+          }));
+          
+          setLocationLoading(false);
+        } catch (error) {
+          console.error("Error fetching address:", error);
+          // Fallback to coordinates if geocoding fails
+          setFormData(prev => ({
+            ...prev,
+            location: `Lat: ${latitude.toFixed(6)}, Lon: ${longitude.toFixed(6)}`,
+            latitude,
+            longitude,
+          }));
+          setLocationLoading(false);
+        }
+      },
+      (error) => {
+        setLocationLoading(false);
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationError("Location access denied. Please enable location permissions.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationError("Location information unavailable.");
+            break;
+          case error.TIMEOUT:
+            setLocationError("Location request timed out.");
+            break;
+          default:
+            setLocationError("An error occurred while fetching location.");
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
   };
 
   return (
@@ -205,10 +278,40 @@ export default function EmergencyPortal() {
                     placeholder="Enter current address or location"
                     required
                   />
-                  <Button variant="outline" size="sm" className="mt-2">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    Use Current Location
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-2"
+                    onClick={handleUseCurrentLocation}
+                    disabled={locationLoading}
+                    type="button"
+                  >
+                    {locationLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Getting Location...
+                      </>
+                    ) : (
+                      <>
+                        <MapPin className="h-4 w-4 mr-2" />
+                        Use Current Location
+                      </>
+                    )}
                   </Button>
+                  {locationError && (
+                    <Alert variant="destructive" className="mt-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>{locationError}</AlertDescription>
+                    </Alert>
+                  )}
+                  {formData.latitude && formData.longitude && (
+                    <Alert className="mt-2 bg-green-50 border-green-200">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <AlertDescription className="text-green-800">
+                        Location captured: {formData.latitude.toFixed(6)}, {formData.longitude.toFixed(6)}
+                      </AlertDescription>
+                    </Alert>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="emergencyContact">Emergency Contact</Label>
