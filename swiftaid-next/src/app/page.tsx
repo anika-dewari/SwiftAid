@@ -37,12 +37,19 @@ export default function Home() {
 
   useEffect(() => {
     // Check if user is logged in
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      setIsAuthenticated(true);
-      setUser(JSON.parse(userData));
+    try {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      
+      if (token && userData) {
+        setIsAuthenticated(true);
+        setUser(JSON.parse(userData));
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+      // Clear invalid data
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
   }, []);
 

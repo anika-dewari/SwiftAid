@@ -25,6 +25,7 @@ import {
   User,
   Navigation,
   Zap,
+  Bell,
 } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
 
@@ -35,6 +36,8 @@ export default function UserDashboard() {
   const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState('');
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -66,11 +69,31 @@ export default function UserDashboard() {
     });
 
     setSocket(newSocket);
+    
+    // Fetch notifications
+    fetchNotifications(token);
 
     return () => {
       newSocket.disconnect();
     };
   }, [router]);
+
+  const fetchNotifications = async (token: string) => {
+    try {
+      const response = await fetch('http://localhost:5001/api/notifications?unreadOnly=true', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data.notifications || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch notifications:', error);
+    }
+  };
 
   const fetchDrivers = async (token: string) => {
     try {
@@ -169,6 +192,19 @@ export default function UserDashboard() {
               <AlertTriangle className="mr-2 h-4 w-4" />
               Emergency
             </AnimatedButton>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowNotificationModal(true)}
+              className="relative"
+            >
+              <Bell className="w-4 h-4 mr-2" />
+              Notifications
+              {notifications.length > 0 && (
+                <Badge className="ml-2 bg-gradient-to-r from-red-500 to-pink-500 text-white animate-pulse">
+                  {notifications.length}
+                </Badge>
+              )}
+            </Button>
             <Button variant="outline" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
               Logout
@@ -453,6 +489,178 @@ export default function UserDashboard() {
         </Card>
       </motion.div>
       </div>
+
+      {/* Liquid Glass Notification Modal */}
+      {showNotificationModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
+          onClick={() => setShowNotificationModal(false)}
+        >
+          {/* Backdrop with liquid glass blur effect */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-xl"
+            style={{
+              background: 'radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.3), rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.3))',
+              backdropFilter: 'blur(20px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            }}
+          />
+          
+          {/* Modal Content */}
+          <div 
+            className="relative max-w-2xl w-full max-h-[80vh] overflow-hidden rounded-3xl shadow-2xl animate-in slide-in-from-bottom-10 duration-500"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(40px) saturate(200%)',
+              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+              border: '1px solid rgba(255, 255, 255, 0.4)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.6)',
+            }}
+          >
+            {/* Gradient Header */}
+            <div className="relative bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-white/20 backdrop-blur-sm rounded-full">
+                    <Bell className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Notifications</h2>
+                    <p className="text-white/90 text-sm">
+                      {notifications.length === 0 
+                        ? 'No new notifications' 
+                        : `${notifications.length} new notification${notifications.length > 1 ? 's' : ''}`
+                      }
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setShowNotificationModal(false)}
+                  variant="ghost"
+                  className="text-white hover:bg-white/20 rounded-full p-2 h-auto transition-all hover:rotate-90"
+                >
+                  <XCircle className="w-6 h-6" />
+                </Button>
+              </div>
+              
+              {/* Animated wave effect */}
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 animate-pulse" />
+            </div>
+
+            {/* Notification List */}
+            <div className="overflow-y-auto max-h-[50vh] p-6 space-y-4">
+              {notifications.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="p-6 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full mb-4">
+                    <Bell className="w-12 h-12 text-blue-500" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">All caught up!</h3>
+                  <p className="text-gray-600">You have no new notifications at the moment.</p>
+                </div>
+              ) : (
+                notifications.map((notification, index) => (
+                  <div
+                    key={notification.id || index}
+                    className="group relative overflow-hidden rounded-2xl p-5 transition-all hover:scale-[1.02] cursor-pointer"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.7)',
+                      backdropFilter: 'blur(10px)',
+                      WebkitBackdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    {/* Gradient accent bar */}
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 via-purple-500 to-pink-500" />
+                    
+                    {/* Notification Icon */}
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="p-3 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 shadow-lg">
+                          {notification.type === 'request' ? (
+                            <AlertTriangle className="w-5 h-5 text-white" />
+                          ) : notification.type === 'driver' ? (
+                            <Ambulance className="w-5 h-5 text-white" />
+                          ) : notification.type === 'status' ? (
+                            <Activity className="w-5 h-5 text-white" />
+                          ) : (
+                            <Bell className="w-5 h-5 text-white" />
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Notification Content */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-1">
+                          {notification.title || 'New Notification'}
+                        </h4>
+                        <p className="text-gray-700 mb-3 leading-relaxed">
+                          {notification.message || notification.description || 'You have a new notification'}
+                        </p>
+                        
+                        {/* Metadata */}
+                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            {notification.created_at 
+                              ? new Date(notification.created_at).toLocaleTimeString('en-US', { 
+                                  hour: '2-digit', 
+                                  minute: '2-digit' 
+                                })
+                              : 'Just now'
+                            }
+                          </span>
+                          {notification.priority && (
+                            <Badge className={`
+                              ${notification.priority === 'high' 
+                                ? 'bg-gradient-to-r from-red-500 to-pink-500' 
+                                : notification.priority === 'medium'
+                                ? 'bg-gradient-to-r from-yellow-500 to-orange-500'
+                                : 'bg-gradient-to-r from-blue-500 to-cyan-500'
+                              } text-white
+                            `}>
+                              {notification.priority}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Action Button */}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600"
+                      >
+                        View
+                      </Button>
+                    </div>
+                    
+                    {/* Hover gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Footer */}
+            {notifications.length > 0 && (
+              <div className="p-4 border-t border-gray-200/50 bg-white/40 backdrop-blur-sm">
+                <Button
+                  variant="ghost"
+                  className="w-full text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-semibold"
+                  onClick={() => {
+                    // Mark all as read logic here
+                    setNotifications([]);
+                  }}
+                >
+                  Mark all as read
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

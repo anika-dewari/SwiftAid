@@ -15,10 +15,35 @@ export const getDriverProfile = async (req, res) => {
       JOIN users u ON dp.user_id = u.id
       WHERE dp.user_id = $1
     `;
-    const result = await pool.query(query, [userId]);
+    let result = await pool.query(query, [userId]);
 
+    // If profile doesn't exist, return empty profile object (will be created on first update)
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Driver profile not found' });
+      console.log('⚠️  No driver profile found for user:', userId);
+      console.log('📝 Profile will be created when driver updates their information');
+      
+      // Return a default profile structure
+      const userQuery = await pool.query(
+        'SELECT email, full_name, phone FROM users WHERE id = $1',
+        [userId]
+      );
+      
+      const defaultProfile = {
+        user_id: userId,
+        email: userQuery.rows[0]?.email,
+        full_name: userQuery.rows[0]?.full_name,
+        user_phone: userQuery.rows[0]?.phone,
+        status: 'offline',
+        rating: 5.0,
+        total_trips: 0,
+        license_number: null,
+        vehicle_type: null,
+        vehicle_number: null,
+        vehicle_model: null,
+        experience_years: null
+      };
+      
+      return res.json({ driver: defaultProfile });
     }
 
     res.json({ driver: result.rows[0] });
@@ -43,22 +68,28 @@ export const updateDriverProfile = async (req, res) => {
       current_longitude
     } = req.body;
 
+    // Use UPSERT (INSERT ... ON CONFLICT UPDATE) to create or update profile
     const query = `
-      UPDATE driver_profiles
-      SET 
-        license_number = COALESCE($1, license_number),
-        vehicle_type = COALESCE($2, vehicle_type),
-        vehicle_number = COALESCE($3, vehicle_number),
-        vehicle_model = COALESCE($4, vehicle_model),
-        experience_years = COALESCE($5, experience_years),
-        bio = COALESCE($6, bio),
-        current_latitude = COALESCE($7, current_latitude),
-        current_longitude = COALESCE($8, current_longitude)
-      WHERE user_id = $9
+      INSERT INTO driver_profiles (
+        user_id, license_number, vehicle_type, vehicle_number, 
+        vehicle_model, experience_years, bio, current_latitude, current_longitude, status
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'offline')
+      ON CONFLICT (user_id)
+      DO UPDATE SET
+        license_number = COALESCE($2, driver_profiles.license_number),
+        vehicle_type = COALESCE($3, driver_profiles.vehicle_type),
+        vehicle_number = COALESCE($4, driver_profiles.vehicle_number),
+        vehicle_model = COALESCE($5, driver_profiles.vehicle_model),
+        experience_years = COALESCE($6, driver_profiles.experience_years),
+        bio = COALESCE($7, driver_profiles.bio),
+        current_latitude = COALESCE($8, driver_profiles.current_latitude),
+        current_longitude = COALESCE($9, driver_profiles.current_longitude)
       RETURNING *
     `;
 
     const result = await pool.query(query, [
+      userId,
       license_number,
       vehicle_type,
       vehicle_number,
@@ -66,13 +97,8 @@ export const updateDriverProfile = async (req, res) => {
       experience_years,
       bio,
       current_latitude,
-      current_longitude,
-      userId
+      current_longitude
     ]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Driver profile not found' });
-    }
 
     res.json({ 
       message: 'Profile updated successfully',
@@ -269,8 +295,17 @@ export const getDriverStats = async (req, res) => {
       [userId]
     );
 
+    // If no driver profile exists, return default stats
     if (driverQuery.rows.length === 0) {
-      return res.status(404).json({ message: 'Driver profile not found' });
+      console.log('No driver profile found, returning default stats for user:', userId);
+      return res.json({ 
+        stats: {
+          completed_trips: 0,
+          cancelled_trips: 0,
+          active_trips: 0,
+          avg_completion_time_minutes: null
+        }
+      });
     }
 
     const driverId = driverQuery.rows[0].id;

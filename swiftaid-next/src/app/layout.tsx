@@ -14,7 +14,11 @@ export const metadata: Metadata = {
   description: "Smart Emergency Dispatch & Resource Allocation System",
   keywords: ["emergency", "dispatch", "ambulance", "hospital", "medical"],
   authors: [{ name: "SwiftAid Team" }],
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
