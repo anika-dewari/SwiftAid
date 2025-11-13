@@ -27,6 +27,7 @@ import {
   Navigation,
   Plus,
   Search,
+  MessageSquare,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -111,6 +112,7 @@ export default function EmergencyRequestHandler() {
   });
   const [showNewRequestForm, setShowNewRequestForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sendSmsEnabled, setSendSmsEnabled] = useState<Record<string, boolean>>({});
 
   const emergencyTypes = [
     { value: "cardiac", label: "Cardiac Emergency", icon: "❤️" },
@@ -147,7 +149,9 @@ export default function EmergencyRequestHandler() {
     toast.success("Emergency request created successfully");
   };
 
-  const assignAmbulance = (requestId: string, ambulanceId: string) => {
+  const assignAmbulance = async (requestId: string, ambulanceId: string) => {
+    const shouldSendSms = sendSmsEnabled[requestId];
+    
     setRequests(prev => prev.map(request => 
       request.id === requestId 
         ? { 
@@ -158,7 +162,42 @@ export default function EmergencyRequestHandler() {
           }
         : request
     ));
-    toast.success("Ambulance assigned successfully");
+    
+    // Send SMS if enabled
+    if (shouldSendSms) {
+      try {
+        const ambulance = availableAmbulances.find(a => a.id === ambulanceId);
+        const request = requests.find(r => r.id === requestId);
+        
+        // Call backend API to send SMS
+        const response = await fetch('http://localhost:5001/api/send-driver-sms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            driverId: ambulanceId,
+            driverName: ambulance?.driverName,
+            patientName: request?.patientName,
+            location: request?.location,
+            emergencyType: request?.emergencyType,
+            severity: request?.severity
+          })
+        });
+        
+        if (response.ok) {
+          toast.success("Ambulance assigned & SMS sent to driver!");
+        } else {
+          toast.success("Ambulance assigned (SMS failed)");
+        }
+      } catch (error) {
+        toast.success("Ambulance assigned (SMS unavailable)");
+        console.error("SMS error:", error);
+      }
+    } else {
+      toast.success("Ambulance assigned successfully");
+    }
   };
 
   const updateRequestStatus = (requestId: string, status: EmergencyRequest['status']) => {
@@ -442,20 +481,42 @@ export default function EmergencyRequestHandler() {
                   </div>
                 )}
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center flex-wrap">
                   {request.status === "pending" && (
-                    <Select onValueChange={(ambulanceId: string) => assignAmbulance(request.id, ambulanceId)}>
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder="Assign ambulance" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableAmbulances.map((ambulance) => (
-                          <SelectItem key={ambulance.id} value={ambulance.id}>
-                            {ambulance.id} - {ambulance.driverName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <>
+                      <Select onValueChange={(ambulanceId: string) => assignAmbulance(request.id, ambulanceId)}>
+                        <SelectTrigger className="w-48">
+                          <SelectValue placeholder="Assign ambulance" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableAmbulances.map((ambulance) => (
+                            <SelectItem key={ambulance.id} value={ambulance.id}>
+                              {ambulance.id} - {ambulance.driverName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      
+                      <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-md">
+                        <input
+                          type="checkbox"
+                          id={`sms-${request.id}`}
+                          checked={sendSmsEnabled[request.id] || false}
+                          onChange={(e) => setSendSmsEnabled(prev => ({
+                            ...prev,
+                            [request.id]: e.target.checked
+                          }))}
+                          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <label 
+                          htmlFor={`sms-${request.id}`} 
+                          className="text-sm font-medium flex items-center gap-1 cursor-pointer"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          Send SMS to Driver
+                        </label>
+                      </div>
+                    </>
                   )}
                   
                   {request.status === "assigned" && (

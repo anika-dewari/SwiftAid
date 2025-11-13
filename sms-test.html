@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SwiftAid - Quick SMS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        .info {
+            background: #e7f3ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 SwiftAid SMS Test</h1>
+        
+        <div class="info">
+            <strong>📱 Test as Driver:</strong> Your number (7454061975) is set as driver. 
+            When you submit this form, you'll receive SMS as if you were a nearby available driver.
+        </div>
+
+        <form id="emergencyForm">
+            <div class="form-group">
+                <label for="patientName">Patient Name *</label>
+                <input type="text" id="patientName" value="Test Patient" required>
+            </div>
+
+            <div class="form-group">
+                <label for="patientPhone">Patient Phone *</label>
+                <input type="tel" id="patientPhone" value="+919999999999" required>
+            </div>
+
+            <div class="form-group">
+                <label for="emergencyType">Emergency Type *</label>
+                <select id="emergencyType" required>
+                    <option value="Cardiac Emergency">Cardiac Emergency</option>
+                    <option value="Trauma/Injury">Trauma/Injury</option>
+                    <option value="Breathing Problems">Breathing Problems</option>
+                    <option value="Stroke">Stroke</option>
+                    <option value="Accident">Accident</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="severity">Severity *</label>
+                <select id="severity" required>
+                    <option value="critical">Critical</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location *</label>
+                <input type="text" id="location" value="India Gate, New Delhi" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" rows="3" placeholder="Describe the emergency...">Test emergency - checking SMS to driver</textarea>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="sendSms" checked>
+                    <label for="sendSms" style="margin-bottom: 0;">📱 Send SMS to Drivers (CHECK THIS!)</label>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn">🚑 Create Emergency & Send SMS</button>
+        </form>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('emergencyForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Creating Emergency...';
+            resultDiv.className = 'result';
+            resultDiv.style.display = 'none';
+
+            try {
+                const requestData = {
+                    patient_name: document.getElementById('patientName').value,
+                    patient_phone: document.getElementById('patientPhone').value,
+                    emergency_type: document.getElementById('emergencyType').value,
+                    severity: document.getElementById('severity').value,
+                    pickup_latitude: 28.6139, // Delhi coordinates
+                    pickup_longitude: 77.2090,
+                    pickup_address: document.getElementById('location').value,
+                    notes: document.getElementById('description').value,
+                    send_sms: document.getElementById('sendSms').checked
+                };
+
+                console.log('📤 Sending request:', requestData);
+
+                const response = await fetch('http://localhost:5001/api/emergency-requests', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+                console.log('📥 Response:', data);
+
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ SUCCESS!</strong><br><br>
+                        Emergency ID: ${data.request.id}<br>
+                        Drivers Notified: ${data.notifiedDrivers}<br>
+                        SMS Sent: ${data.smsResults.sent}<br>
+                        SMS Failed: ${data.smsResults.failed}<br><br>
+                        <strong>📱 Check your phone (+917454061975) for ${data.smsResults.sent} SMS messages!</strong>
+                    `;
+                } else {
+                    throw new Error(data.error || 'Request failed');
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <strong>❌ ERROR!</strong><br><br>
+                    ${error.message}<br><br>
+                    Check console for details.
+                `;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚑 Create Emergency & Send SMS';
+            }
+        });
+    </script>
+</body>
+</html>

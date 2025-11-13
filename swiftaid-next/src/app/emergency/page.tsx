@@ -19,6 +19,7 @@ import {
   CheckCircle,
   ArrowLeft,
   Loader2,
+  MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -39,6 +40,7 @@ export default function EmergencyPortal() {
     emergencyContact: "",
     latitude: null as number | null,
     longitude: null as number | null,
+    sendSmsToDriver: true, // Default: enabled
   });
 
   const emergencyTypes = [
@@ -57,10 +59,83 @@ export default function EmergencyPortal() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setCurrentStep(4);
+    
+    // Get auth token
+    const token = localStorage.getItem('token');
+    
+    // Validate required fields
+    if (!formData.patientName || !formData.phone || !formData.emergencyType) {
+      alert('Please fill in all required fields: Patient Name, Phone, and Emergency Type');
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Use default coordinates if not provided (Delhi center as fallback)
+    const latitude = formData.latitude || 28.6139;
+    const longitude = formData.longitude || 77.2090;
+    
+    // Prepare emergency request data
+    const requestData = {
+      patient_name: formData.patientName,
+      patient_phone: formData.phone,
+      emergency_type: formData.emergencyType,
+      severity: formData.severity || 'medium',
+      pickup_latitude: latitude,
+      pickup_longitude: longitude,
+      pickup_address: formData.location || 'Location not specified',
+      notes: `${formData.description || ''}\nAllergies: ${formData.allergies || 'None'}\nMedications: ${formData.medications || 'None'}`,
+      send_sms: formData.sendSmsToDriver // Include SMS flag
+    };
+    
+    console.log('📤 Sending emergency request:', requestData);
+    
+    try {
+      // Call backend API
+      const response = await fetch('http://localhost:5001/api/emergency-requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      // Check if response is OK before parsing JSON
+      if (!response.ok) {
+        console.error('❌ Backend error - Status code:', response.status);
+        let errorMessage = 'Failed to submit emergency request';
+        
+        try {
+          const data = await response.json();
+          console.error('❌ Backend error response:', data);
+          errorMessage = data.error || errorMessage;
+        } catch (parseError) {
+          console.error('❌ Could not parse error response');
+          const text = await response.text();
+          console.error('❌ Raw response:', text);
+        }
+        
+        throw new Error(errorMessage);
+      }
+
+      // Parse successful response
+      const data = await response.json();
+      console.log('✅ Emergency request created:', data);
+      
+      // Show success message with SMS results
+      if (data.smsResults && data.smsResults.sent > 0) {
+        console.log(`📱 SMS sent to ${data.smsResults.sent} drivers`);
+      }
+      
+      setIsSubmitting(false);
+      setCurrentStep(4);
+    } catch (error: any) {
+      console.error('❌ Error submitting emergency:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Request data was:', requestData);
+      setIsSubmitting(false);
+      alert(`Failed to submit emergency request: ${error.message}\n\nCheck console for details.`);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -455,7 +530,33 @@ export default function EmergencyPortal() {
                   />
                 </div>
 
-                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mt-6">
+                {/* SMS Notification Option */}
+                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mt-6">
+                  <div className="flex items-start space-x-3">
+                    <MessageSquare className="h-5 w-5 text-blue-500 mt-0.5" />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium text-blue-800 dark:text-blue-200">SMS Notification to Driver</h4>
+                          <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                            Send SMS alert to the assigned driver with your emergency details
+                          </p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.sendSmsToDriver}
+                            onChange={(e) => handleInputChange("sendSmsToDriver", e.target.checked.toString())}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mt-4">
                   <div className="flex items-start space-x-3">
                     <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5" />
                     <div>

@@ -1,11 +1,11 @@
-# 🚑 SwiftAid: Smart Emergency Dispatch & Resource Allocation System
+# 🚑 SwiftAid - Smart Emergency Response System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-blue.svg)](https://www.postgresql.org/)
-[![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://reactjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 
-> 💡 **SwiftAid** is an intelligent emergency dispatch system that optimizes ambulance allocation and hospital selection through **real-time data, spatial queries,** and **automated decision-making algorithms.**
+> 💡 **SwiftAid** is a comprehensive emergency dispatch platform that connects patients with the nearest available ambulances using **real-time geolocation, SMS notifications, and intelligent resource allocation.**
 
 ---
 
@@ -47,40 +47,70 @@ graph TD;
 ## 🛠️ Tech Stack
 
 | Layer               | Technology                         |
-| ------------------- | ---------------------------------- |
-| **Frontend**        | React.js, Tailwind CSS, Leaflet.js |
-| **Backend**         | Node.js, Express.js, Axios         |
-| **Database**        | PostgreSQL 14+, PostGIS 3.x        |
-| **Testing & Tools** | Postman, Git, JMeter (planned)     |
+| ------------------- | ------------------------------------------------- |
+| **Frontend**        | Next.js 15, React 18, TypeScript, TailwindCSS     |
+| **Backend**         | Node.js, Express.js, Socket.IO, Twilio SMS        |
+| **Database**        | PostgreSQL 14+, PostGIS 3.x                       |
+| **UI Components**   | Radix UI, Framer Motion, Lucide React Icons       |
+| **Maps & Charts**   | Leaflet.js, React-Leaflet, Chart.js               |
+| **Testing & Tools** | Postman, Git                                      |
 
 ---
 
 ## 🚀 Quick Start
 
-### 1️⃣ Clone & Install
+### 📋 Prerequisites
+See **[REQUIREMENTS.md](REQUIREMENTS.md)** for detailed installation instructions for macOS, Windows, and Linux.
+
+**Required:**
+- Node.js 18+ & npm
+- PostgreSQL 14+
+- Git
+- Twilio account (for SMS)
+
+### 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/<your-username>/SwiftAid.git
-cd SwiftAid/backend && npm install
-cd ../frontend && npm install
+git clone https://github.com/anika-dewari/SwiftAid.git
+cd SwiftAid
 ```
 
 ### 2️⃣ Setup Database
 
-```sql
+```bash
+psql -U postgres
 CREATE DATABASE swiftaid_db;
-\c swiftaid_db;
-CREATE EXTENSION postgis;
+\q
+
+psql -U postgres -d swiftaid_db -f backend/schema.sql
 ```
 
-### 3️⃣ Run Servers
+### 3️⃣ Configure Backend
 
 ```bash
-# Backend
-cd backend && npm start
+cd backend
+npm install
+cp .env.example .env
+# Edit .env with your database and Twilio credentials
+```
 
-# Frontend
-cd frontend && npm start
+### 4️⃣ Configure Frontend
+
+```bash
+cd swiftaid-next
+npm install
+```
+
+### 5️⃣ Run Application
+
+```bash
+# Terminal 1 - Backend (port 5001)
+cd backend
+npm run dev
+
+# Terminal 2 - Frontend (port 3000)
+cd swiftaid-next
+npm run dev
 ```
 
 Visit → **[http://localhost:3000](http://localhost:3000)**
@@ -91,11 +121,15 @@ Visit → **[http://localhost:3000](http://localhost:3000)**
 
 | Feature                           | Description                                                |
 | --------------------------------- | ---------------------------------------------------------- |
-| 🚑 **Nearest Ambulance Finder**   | Uses Haversine formula & PostGIS ST_Distance for precision |
-| 🏥 **Optimal Hospital Selection** | Considers distance, specialization & availability          |
-| 📡 **Live Tracking (Planned)**    | Real-time ambulance movement via Socket.io                 |
-| 🔄 **Resource CRUD APIs**         | Full CRUD for hospitals, ambulances, and drivers           |
-| 🧾 **Analytics (Planned)**        | Response time metrics and performance tracking             |
+| 🚑 **Nearest Ambulance Finder**   | GPS-based matching using PostGIS ST_Distance               |
+| 📱 **SMS Notifications**          | Twilio-powered alerts to drivers with emergency details    |
+| 🏥 **Smart Hospital Selection**   | Considers distance, specialization & availability          |
+| � **Medical Info Tracking**      | Captures patient allergies, medications, and notes         |
+| 📡 **Real-time Updates**          | Live dashboard with Socket.IO WebSocket communication      |
+| 🗺️ **Interactive Maps**          | Leaflet-based location tracking and visualization          |
+| 🔐 **Role-based Access**          | User, Driver, and Admin authentication with JWT            |
+| 🔄 **Resource Management**        | Full CRUD for hospitals, ambulances, and drivers           |
+| 📊 **Dashboard Analytics**        | Charts and metrics for emergency response tracking         |
 
 ---
 

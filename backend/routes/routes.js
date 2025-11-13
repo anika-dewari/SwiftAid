@@ -47,6 +47,8 @@ import {
   getDriverRequests,
   getPendingRequests,
   acceptEmergencyRequest,
+  updateRequestStatus,
+  assignDriverToRequest,
 } from '../controllers/emergencyRequestController.js';
 
 // Notification Controller
@@ -57,6 +59,12 @@ import {
   deleteNotification,
   getUnreadCount,
 } from '../controllers/notificationController.js';
+
+// SMS Controller
+import {
+  sendDriverSMS,
+  testSMS,
+} from '../controllers/smsController.js';
 
 // Dispatch Controller
 import { createFullDispatch } from '../controllers/dispatchController.js';
@@ -122,6 +130,9 @@ router.get('/emergency-requests/pending', authenticateToken, authorizeRole('driv
 // Accept request (driver only)
 router.post('/emergency-requests/:id/accept', authenticateToken, authorizeRole('driver'), acceptEmergencyRequest);
 
+// Update request status (driver can update status: en_route, arrived, completed)
+router.patch('/emergency-requests/:id/status', authenticateToken, authorizeRole('driver'), updateRequestStatus);
+
 // Update/Delete (admin only)
 router.put('/emergency-requests/:id', authenticateToken, authorizeRole('admin'), updateEmergencyRequest);
 router.delete('/emergency-requests/:id', authenticateToken, authorizeRole('admin'), deleteEmergencyRequest);
@@ -155,6 +166,12 @@ router.delete('/hospitals/:id', authenticateToken, authorizeRole('admin'), delet
 // 🚚 DISPATCH ROUTES
 // =========================================
 router.post('/dispatch/full', authenticateToken, authorizeRole('admin', 'user'), createFullDispatch);
+
+// =========================================
+// 📱 SMS ROUTES
+// =========================================
+router.post('/send-driver-sms', authenticateToken, sendDriverSMS);
+router.post('/test-sms', authenticateToken, authorizeRole('admin'), testSMS);
 
 // =========================================
 // 🏠 HEALTH CHECK
