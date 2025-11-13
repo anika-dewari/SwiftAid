@@ -117,11 +117,25 @@ export function SwiftAidLoginForm({
   };
 
   return (
-    <div className="relative flex min-h-svh flex-col items-center justify-center p-6 md:p-10 overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-blue-950 dark:to-purple-950">
-      {/* Animated Orbs */}
-      <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-300 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-70 dark:opacity-20 animate-blob"></div>
-      <div className="absolute top-0 -right-4 w-72 h-72 bg-purple-300 dark:bg-purple-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-70 dark:opacity-20 animate-blob animation-delay-2000"></div>
-      <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 dark:bg-pink-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-xl opacity-70 dark:opacity-20 animate-blob animation-delay-4000"></div>
+    <div className="relative flex min-h-svh flex-col items-center justify-center p-6 md:p-10 overflow-hidden bg-black">
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <iframe
+          className="absolute top-1/2 left-1/2 w-[300%] h-[300%] pointer-events-none"
+          style={{
+            transform: 'translate(-50%, -50%)',
+            objectFit: 'cover',
+          }}
+          src="https://www.youtube.com/embed/MwXuv4EHDUo?autoplay=1&mute=1&loop=1&playlist=MwXuv4EHDUo&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&vq=hd1080"
+          title="Ambulance Background"
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+        />
+        {/* Dark overlay for better readability */}
+        <div className="absolute inset-0 bg-black/60"></div>
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-purple-900/40 to-transparent"></div>
+      </div>
       
       <div className="w-full max-w-sm md:max-w-3xl relative z-10">
         <div className={cn("flex flex-col gap-6 overflow-hidden", className)} {...props}>
