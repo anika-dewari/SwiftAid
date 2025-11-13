@@ -58,27 +58,12 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const HOST = '0.0.0.0'; // Listen on all interfaces
 
-console.log('📝 Environment PORT:', process.env.PORT);
-console.log('📝 Using PORT:', PORT);
-console.log('📝 Attempting to bind to:', `${HOST}:${PORT}`);
-
-httpServer.listen(PORT, HOST, () => {
-  const address = httpServer.address();
+httpServer.listen(PORT, () => {
   console.log('='.repeat(50));
   console.log(`🚀 SwiftAid Backend Server Running`);
-  console.log(`📡 Listening on:`, address);
   console.log(`📡 HTTP Server: http://localhost:${PORT}`);
   console.log(`⚡ Socket.IO: Enabled`);
   console.log(`🔗 API Endpoint: http://localhost:${PORT}/api`);
   console.log('='.repeat(50));
-}).on('error', (err) => {
-  console.error('❌ Server Listen Error:', err);
-  console.error('❌ Error code:', err.code);
-  console.error('❌ Error message:', err.message);
-  if (err.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${PORT} is already in use!`);
-  }
-  process.exit(1);
 });
