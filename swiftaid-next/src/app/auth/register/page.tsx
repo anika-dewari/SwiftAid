@@ -533,24 +533,53 @@ export default function RegisterPage() {
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Full Name Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="driver_full_name">Full Name</Label>
+                    <Label htmlFor="driver_full_name" className="flex items-center justify-between">
+                      <span>Full Name</span>
+                      {isFieldValid('full_name') && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                    </Label>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
                         id="driver_full_name"
                         name="full_name"
                         placeholder="John Doe"
-                        className="pl-10"
+                        className={`pl-10 pr-10 ${
+                          hasFieldError('full_name') ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        } ${
+                          isFieldValid('full_name') ? 'border-green-500 focus-visible:ring-green-500' : ''
+                        }`}
                         value={formData.full_name}
                         onChange={handleChange}
+                        onBlur={() => handleBlur('full_name')}
                         required
                       />
+                      {hasFieldError('full_name') && (
+                        <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                      )}
+                      {isFieldValid('full_name') && (
+                        <CheckCircle2 className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+                      )}
                     </div>
+                    {errors.full_name && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {errors.full_name}
+                      </p>
+                    )}
                   </div>
 
+                  {/* Phone Number Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="driver_phone">Phone Number</Label>
+                    <Label htmlFor="driver_phone" className="flex items-center justify-between">
+                      <span>Phone Number</span>
+                      {isFieldValid('phone') && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                    </Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
@@ -558,16 +587,39 @@ export default function RegisterPage() {
                         name="phone"
                         type="tel"
                         placeholder="+1234567890"
-                        className="pl-10"
+                        className={`pl-10 pr-10 ${
+                          hasFieldError('phone') ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        } ${
+                          isFieldValid('phone') ? 'border-green-500 focus-visible:ring-green-500' : ''
+                        }`}
                         value={formData.phone}
                         onChange={handleChange}
+                        onBlur={() => handleBlur('phone')}
                         required
                       />
+                      {hasFieldError('phone') && (
+                        <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                      )}
+                      {isFieldValid('phone') && (
+                        <CheckCircle2 className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+                      )}
                     </div>
+                    {errors.phone && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
 
+                  {/* Email Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="driver_email">Email</Label>
+                    <Label htmlFor="driver_email" className="flex items-center justify-between">
+                      <span>Email</span>
+                      {isFieldValid('email') && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                    </Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
@@ -575,89 +627,251 @@ export default function RegisterPage() {
                         name="email"
                         type="email"
                         placeholder="you@example.com"
-                        className="pl-10"
+                        className={`pl-10 pr-10 ${
+                          hasFieldError('email') ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        } ${
+                          isFieldValid('email') ? 'border-green-500 focus-visible:ring-green-500' : ''
+                        }`}
                         value={formData.email}
                         onChange={handleChange}
+                        onBlur={() => handleBlur('email')}
                         required
                       />
+                      {hasFieldError('email') && (
+                        <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                      )}
+                      {isFieldValid('email') && (
+                        <CheckCircle2 className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+                      )}
                     </div>
+                    {errors.email && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
 
+                  {/* Password Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="driver_password">Password</Label>
+                    <Label htmlFor="driver_password" className="flex items-center justify-between">
+                      <span>Password</span>
+                      {isFieldValid('password') && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                    </Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
                         id="driver_password"
                         name="password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
-                        className="pl-10"
+                        className={`pl-10 pr-20 ${
+                          hasFieldError('password') ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        } ${
+                          isFieldValid('password') ? 'border-green-500 focus-visible:ring-green-500' : ''
+                        }`}
                         value={formData.password}
                         onChange={handleChange}
+                        onBlur={() => handleBlur('password')}
                         required
                         minLength={6}
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-9 top-3 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                      {hasFieldError('password') && (
+                        <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                      )}
+                      {isFieldValid('password') && (
+                        <CheckCircle2 className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+                      )}
                     </div>
+                    {errors.password && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {errors.password}
+                      </p>
+                    )}
                   </div>
 
+                  {/* License Number Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="license_number">License Number</Label>
+                    <Label htmlFor="license_number" className="flex items-center justify-between">
+                      <span>License Number</span>
+                      {isFieldValid('license_number') && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                    </Label>
                     <div className="relative">
                       <FileText className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
                         id="license_number"
                         name="license_number"
-                        placeholder="DL-1234567890"
-                        className="pl-10"
+                        placeholder="DL-12345678"
+                        className={`pl-10 pr-10 ${
+                          hasFieldError('license_number') ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        } ${
+                          isFieldValid('license_number') ? 'border-green-500 focus-visible:ring-green-500' : ''
+                        }`}
                         value={driverDetails.license_number}
                         onChange={handleDriverChange}
+                        onBlur={() => handleBlur('license_number')}
                         required
                       />
+                      {hasFieldError('license_number') && (
+                        <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                      )}
+                      {isFieldValid('license_number') && (
+                        <CheckCircle2 className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+                      )}
                     </div>
+                    {errors.license_number && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {errors.license_number}
+                      </p>
+                    )}
+                    {!errors.license_number && !touched.license_number && (
+                      <p className="text-xs text-gray-500">Format: DL-12345678 (2 letters + 4-8 digits)</p>
+                    )}
                   </div>
 
+                  {/* Vehicle Type Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="vehicle_type">Vehicle Type</Label>
+                    <Label htmlFor="vehicle_type" className="flex items-center justify-between">
+                      <span>Vehicle Type</span>
+                      {isFieldValid('vehicle_type') && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                    </Label>
                     <div className="relative">
                       <Car className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
                         id="vehicle_type"
                         name="vehicle_type"
-                        placeholder="Ambulance/Van"
-                        className="pl-10"
+                        placeholder="ambulance"
+                        className={`pl-10 pr-10 ${
+                          hasFieldError('vehicle_type') ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        } ${
+                          isFieldValid('vehicle_type') ? 'border-green-500 focus-visible:ring-green-500' : ''
+                        }`}
                         value={driverDetails.vehicle_type}
                         onChange={handleDriverChange}
+                        onBlur={() => handleBlur('vehicle_type')}
                         required
                       />
+                      {hasFieldError('vehicle_type') && (
+                        <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                      )}
+                      {isFieldValid('vehicle_type') && (
+                        <CheckCircle2 className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+                      )}
                     </div>
+                    {errors.vehicle_type && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {errors.vehicle_type}
+                      </p>
+                    )}
+                    {!errors.vehicle_type && !touched.vehicle_type && (
+                      <p className="text-xs text-gray-500">Options: ambulance, advanced-ambulance, icu-ambulance</p>
+                    )}
                   </div>
 
+                  {/* Vehicle Number Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="vehicle_number">Vehicle Number</Label>
-                    <Input
-                      id="vehicle_number"
-                      name="vehicle_number"
-                      placeholder="ABC-1234"
-                      value={driverDetails.vehicle_number}
-                      onChange={handleDriverChange}
-                      required
-                    />
+                    <Label htmlFor="vehicle_number" className="flex items-center justify-between">
+                      <span>Vehicle Number</span>
+                      {isFieldValid('vehicle_number') && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                    </Label>
+                    <div className="relative">
+                      <Car className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="vehicle_number"
+                        name="vehicle_number"
+                        placeholder="ABC-1234"
+                        className={`pl-10 pr-10 ${
+                          hasFieldError('vehicle_number') ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        } ${
+                          isFieldValid('vehicle_number') ? 'border-green-500 focus-visible:ring-green-500' : ''
+                        }`}
+                        value={driverDetails.vehicle_number}
+                        onChange={handleDriverChange}
+                        onBlur={() => handleBlur('vehicle_number')}
+                        required
+                      />
+                      {hasFieldError('vehicle_number') && (
+                        <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                      )}
+                      {isFieldValid('vehicle_number') && (
+                        <CheckCircle2 className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+                      )}
+                    </div>
+                    {errors.vehicle_number && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {errors.vehicle_number}
+                      </p>
+                    )}
+                    {!errors.vehicle_number && !touched.vehicle_number && (
+                      <p className="text-xs text-gray-500">Format: ABC-1234 or MH12AB1234</p>
+                    )}
                   </div>
 
+                  {/* Vehicle Model Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="vehicle_model">Vehicle Model</Label>
-                    <Input
-                      id="vehicle_model"
-                      name="vehicle_model"
-                      placeholder="Ford Transit 2022"
-                      value={driverDetails.vehicle_model}
-                      onChange={handleDriverChange}
-                    />
+                    <Label htmlFor="vehicle_model" className="flex items-center justify-between">
+                      <span>Vehicle Model</span>
+                      {isFieldValid('vehicle_model') && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                    </Label>
+                    <div className="relative">
+                      <Car className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="vehicle_model"
+                        name="vehicle_model"
+                        placeholder="Ford Transit 2022"
+                        className={`pl-10 pr-10 ${
+                          hasFieldError('vehicle_model') ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        } ${
+                          isFieldValid('vehicle_model') ? 'border-green-500 focus-visible:ring-green-500' : ''
+                        }`}
+                        value={driverDetails.vehicle_model}
+                        onChange={handleDriverChange}
+                        onBlur={() => handleBlur('vehicle_model')}
+                      />
+                      {hasFieldError('vehicle_model') && (
+                        <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                      )}
+                      {isFieldValid('vehicle_model') && (
+                        <CheckCircle2 className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+                      )}
+                    </div>
+                    {errors.vehicle_model && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {errors.vehicle_model}
+                      </p>
+                    )}
                   </div>
 
+                  {/* Experience Years Field */}
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="experience_years">Years of Experience</Label>
+                    <Label htmlFor="experience_years" className="flex items-center justify-between">
+                      <span>Years of Experience</span>
+                      {isFieldValid('experience_years') && (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      )}
+                    </Label>
                     <div className="relative">
                       <Award className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
@@ -665,12 +879,33 @@ export default function RegisterPage() {
                         name="experience_years"
                         type="number"
                         placeholder="5"
-                        className="pl-10"
+                        className={`pl-10 pr-10 ${
+                          hasFieldError('experience_years') ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        } ${
+                          isFieldValid('experience_years') ? 'border-green-500 focus-visible:ring-green-500' : ''
+                        }`}
                         value={driverDetails.experience_years}
                         onChange={handleDriverChange}
+                        onBlur={() => handleBlur('experience_years')}
                         min="0"
+                        max="50"
                       />
+                      {hasFieldError('experience_years') && (
+                        <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                      )}
+                      {isFieldValid('experience_years') && (
+                        <CheckCircle2 className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+                      )}
                     </div>
+                    {errors.experience_years && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {errors.experience_years}
+                      </p>
+                    )}
+                    {!errors.experience_years && !touched.experience_years && (
+                      <p className="text-xs text-gray-500">Enter 0-50 years</p>
+                    )}
                   </div>
                 </div>
               </TabsContent>
