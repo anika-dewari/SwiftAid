@@ -49,6 +49,8 @@ export default function DriverDashboard() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [error, setError] = useState('');
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [pendingRequests, setPendingRequests] = useState<any[]>([]);
+  const [acceptingRequestId, setAcceptingRequestId] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -74,6 +76,7 @@ export default function DriverDashboard() {
     fetchProfile(token);
     fetchStats(token);
     fetchNotifications(token);
+    fetchPendingRequests(token);
 
     // Setup Socket.IO
     const newSocket = io('http://localhost:5000');
@@ -85,6 +88,7 @@ export default function DriverDashboard() {
     newSocket.on('new-emergency-request', (data) => {
       setMessage(`New Emergency: ${data.emergencyType} - ${data.patientName}`);
       fetchNotifications(token);
+      fetchPendingRequests(token);
     });
 
     setSocket(newSocket);
@@ -174,6 +178,70 @@ export default function DriverDashboard() {
     } catch (error) {
       console.error('Failed to fetch stats:', error);
       setStats({ completed_trips: 0, active_trips: 0 });
+    }
+  };
+
+  const fetchPendingRequests = async (token: string) => {
+    try {
+      console.log('📋 Fetching pending emergency requests...');
+      const response = await fetch('http://localhost:5000/api/emergency-requests/pending', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Pending requests received:', data.requests);
+        setPendingRequests(data.requests || []);
+      } else {
+        console.warn('⚠️ Failed to fetch pending requests:', response.status);
+        setPendingRequests([]);
+      }
+    } catch (error) {
+      console.error('❌ Failed to fetch pending requests:', error);
+      setPendingRequests([]);
+    }
+  };
+
+  const handleAcceptRequest = async (requestId: string) => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    setAcceptingRequestId(requestId);
+    try {
+      console.log(`🤝 Accepting request ${requestId}...`);
+      const response = await fetch(`http://localhost:5000/api/emergency-requests/${requestId}/accept`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Request accepted:', data);
+        setMessage(`✅ Emergency request accepted! You're assigned to patient ${data.request?.patient_name}`);
+        
+        // Update driver status to busy
+        setStatus('busy');
+        
+        // Remove from pending list
+        setPendingRequests(prev => prev.filter(req => req.id !== requestId));
+        
+        // Refresh pending requests after a short delay
+        setTimeout(() => fetchPendingRequests(token), 1000);
+      } else {
+        const errorData = await response.json();
+        console.error('❌ Error accepting request:', errorData);
+        setMessage(`❌ Failed to accept request: ${errorData.message || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('❌ Error accepting request:', error);
+      setMessage('❌ Failed to accept request. Please try again.');
+    } finally {
+      setAcceptingRequestId(null);
     }
   };
 
@@ -473,6 +541,104 @@ export default function DriverDashboard() {
               </Card>
             </div>
           </div>
+        )}
+
+        {/* Pending Emergency Requests Section */}
+        {pendingRequests.length > 0 && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/30 hover:shadow-2xl transition-shadow overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-red-500 to-orange-500 text-white">
+              <CardTitle className="flex items-center gap-2">
+                <Ambulance className="w-6 h-6" />
+                Pending Emergency Requests ({pendingRequests.length})
+              </CardTitle>
+              <CardDescription className="text-red-100">
+                New emergency requests waiting for your acceptance
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {pendingRequests.map((request) => (
+                  <div
+                    key={request.id}
+                    className="border-2 border-orange-200 dark:border-orange-800 rounded-xl p-4 hover:border-orange-400 transition-colors bg-white dark:bg-gray-800"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      {/* Patient Info */}
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Patient</p>
+                        <p className="text-lg font-bold text-gray-800 dark:text-gray-100">{request.patient_name}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 mt-1">
+                          <Phone className="w-3 h-3" />
+                          {request.patient_phone}
+                        </p>
+                      </div>
+
+                      {/* Emergency Type */}
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Emergency Type</p>
+                        <Badge className="bg-red-500 text-white capitalize">
+                          {request.emergency_type}
+                        </Badge>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 capitalize">
+                          Severity: <span className={`font-bold ${
+                            request.severity === 'critical' ? 'text-red-600' :
+                            request.severity === 'high' ? 'text-orange-600' :
+                            request.severity === 'medium' ? 'text-yellow-600' :
+                            'text-green-600'
+                          }`}>{request.severity}</span>
+                        </p>
+                      </div>
+
+                      {/* Location */}
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Location</p>
+                        <p className="text-sm text-gray-800 dark:text-gray-100 flex items-start gap-2">
+                          <MapPin className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                          <span>{request.pickup_address || `${request.pickup_latitude.toFixed(4)}, ${request.pickup_longitude.toFixed(4)}`}</span>
+                        </p>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-col gap-2 justify-center">
+                        <Button
+                          onClick={() => handleAcceptRequest(request.id)}
+                          disabled={acceptingRequestId === request.id}
+                          className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+                        >
+                          {acceptingRequestId === request.id ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                              Accepting...
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              Accept
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-500"
+                        >
+                          <XCircle className="w-4 h-4 mr-2" />
+                          Decline
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Notes if available */}
+                    {request.notes && (
+                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Notes</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">{request.notes}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* Profile Card */}
