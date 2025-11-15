@@ -400,6 +400,10 @@ export const acceptEmergencyRequest = async (req, res) => {
 
       if (req.io) {
         // Emit accepted event with driver details and location so the requester can see driver on map
+        // Normalize location types to numbers or null and include driver current coordinates
+        const lat = driver.current_latitude != null ? Number(driver.current_latitude) : null;
+        const lng = driver.current_longitude != null ? Number(driver.current_longitude) : null;
+
         req.io.to(`user_${request.user_id}`).emit('request-accepted', {
           requestId: id,
           driverId: driverId,
@@ -407,10 +411,10 @@ export const acceptEmergencyRequest = async (req, res) => {
           driverPhone: driver.phone,
           vehicleNumber: driver.vehicle_number,
           vehicleModel: driver.vehicle_model,
-          driverLocation: {
-            latitude: driver.current_latitude || null,
-            longitude: driver.current_longitude || null
-          },
+          driverLocation: lat != null && lng != null ? { latitude: lat, longitude: lng } : null,
+          // include pickup coordinates so requester can render destination
+          pickupLatitude: request.pickup_latitude != null ? Number(request.pickup_latitude) : null,
+          pickupLongitude: request.pickup_longitude != null ? Number(request.pickup_longitude) : null,
           eta: '8-10'
         });
       }
@@ -542,6 +546,14 @@ export const updateRequestStatus = async (req, res) => {
         'UPDATE driver_profiles SET status = $1 WHERE id = $2',
         ['available', driver.id]
       );
+
+      // mark completed_at on the request and increment driver's total_trips
+      try {
+        await pool.query('UPDATE emergency_requests SET completed_at = NOW() WHERE id = $1', [id]);
+        await pool.query('UPDATE driver_profiles SET total_trips = COALESCE(total_trips,0) + 1 WHERE id = $1', [driver.id]);
+      } catch (tripErr) {
+        console.error('Error finalizing trip on completion:', tripErr.message || tripErr);
+      }
     }
 
     // Send SMS notifications based on status
@@ -606,6 +618,70 @@ export const updateRequestStatus = async (req, res) => {
   } catch (err) {
     console.error('Update request status error:', err);
     res.status(500).json({ error: 'Failed to update request status' });
+  }
+};
+
+// Allow request owner (user) or assigned driver to cancel a request
+export const cancelEmergencyRequest = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user ? req.user.userId : null;
+
+    const requestQuery = await pool.query('SELECT * FROM emergency_requests WHERE id = $1', [id]);
+    if (requestQuery.rows.length === 0) {
+      return res.status(404).json({ error: 'Emergency request not found' });
+    }
+
+    const request = requestQuery.rows[0];
+
+    // Allow cancellation if the authenticated user is the requester
+    // or if the authenticated user is the assigned driver
+    const isOwner = request.user_id === userId;
+    let isDriverAssigned = false;
+
+    if (req.user && req.user.role === 'driver') {
+      // get driver profile for this user
+      const driverQuery = await pool.query('SELECT id FROM driver_profiles WHERE user_id = $1', [userId]);
+      if (driverQuery.rows.length > 0 && driverQuery.rows[0].id === request.driver_id) {
+        isDriverAssigned = true;
+      }
+    }
+
+    if (!isOwner && !isDriverAssigned) {
+      return res.status(403).json({ error: 'You are not authorized to cancel this request' });
+    }
+
+    // Update request status to cancelled
+    await pool.query('UPDATE emergency_requests SET status = $1 WHERE id = $2', ['cancelled', id]);
+
+    // If a driver was assigned, mark them available again
+    if (request.driver_id) {
+      try {
+        await pool.query('UPDATE driver_profiles SET status = $1 WHERE id = $2', ['available', request.driver_id]);
+      } catch (e) {
+        console.warn('Failed to mark driver available after cancellation:', e.message || e);
+      }
+    }
+
+    // Create in-app notification for the requester
+    if (request.user_id) {
+      await createNotification(
+        request.user_id,
+        'Request Cancelled',
+        'Your emergency request has been cancelled.',
+        'request_cancelled',
+        id
+      );
+
+      if (req.io) {
+        req.io.to(`user_${request.user_id}`).emit('request-status-updated', { requestId: id, status: 'cancelled' });
+      }
+    }
+
+    res.json({ message: 'Request cancelled successfully' });
+  } catch (err) {
+    console.error('Cancel request error:', err);
+    res.status(500).json({ error: 'Failed to cancel request' });
   }
 };
 

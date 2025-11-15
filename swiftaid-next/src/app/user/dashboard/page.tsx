@@ -81,6 +81,41 @@ export default function UserDashboard() {
       setMessage(`Your request has been accepted by ${data.driverName || 'a driver'}!`);
       setDriverLocationInfo(data);
       setShowDriverLocationModal(true);
+
+      // If driver location not provided, try to fetch driver's latest coordinates from server
+      if ((!data.driverLocation || !data.driverLocation.latitude || !data.driverLocation.longitude) && data.driverId) {
+        (async () => {
+          try {
+            const res = await fetch(`http://localhost:5000/api/drivers/${data.driverId}`);
+            if (res.ok) {
+              const json = await res.json();
+              const drv = json.driver;
+              if (drv && drv.current_latitude != null && drv.current_longitude != null) {
+                setDriverLocationInfo((prev: any) => ({ ...(prev || {}), driverLocation: { latitude: drv.current_latitude, longitude: drv.current_longitude } }));
+              }
+            }
+          } catch (err) {
+            console.warn('Failed to fetch driver profile for initial coords:', err);
+          }
+        })();
+      }
+    });
+
+    // Listen for trip completion events
+    newSocket.on('request-status-updated', (data: any) => {
+      console.log('Request status updated:', data);
+      if (data.status === 'completed') {
+        setMessage('Your trip has been completed. Thank you for using SwiftAid!');
+        setShowDriverLocationModal(false);
+        setDriverLocationInfo(null);
+        // Refresh drivers list to update their status
+        fetchDrivers(token);
+      } else if (data.status === 'cancelled') {
+        setMessage('Your request has been cancelled.');
+        setShowDriverLocationModal(false);
+        setDriverLocationInfo(null);
+        fetchDrivers(token);
+      }
     });
 
     setSocket(newSocket);
@@ -253,7 +288,32 @@ export default function UserDashboard() {
             <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800 dark:text-green-200">
-                {message}
+                      <div className="flex items-center justify-between">
+                        <div>{message}</div>
+                        {driverLocationInfo && driverLocationInfo.driverId && (
+                          <div className="ml-4">
+                            <Button size="sm" onClick={async () => {
+                              // Show modal and ensure we have initial coords
+                              setShowDriverLocationModal(true);
+                              // If coords missing, try to fetch driver profile
+                              if ((!driverLocationInfo.driverLocation || !driverLocationInfo.driverLocation.latitude || !driverLocationInfo.driverLocation.longitude) && driverLocationInfo.driverId) {
+                                try {
+                                  const res = await fetch(`http://localhost:5000/api/drivers/${driverLocationInfo.driverId}`);
+                                  if (res.ok) {
+                                    const json = await res.json();
+                                    const drv = json.driver;
+                                    if (drv && drv.current_latitude != null && drv.current_longitude != null) {
+                                      setDriverLocationInfo((prev: any) => ({ ...(prev || {}), driverLocation: { latitude: drv.current_latitude, longitude: drv.current_longitude } }));
+                                    }
+                                  }
+                                } catch (err) {
+                                  console.warn('Failed to fetch driver profile for Show location:', err);
+                                }
+                              }
+                            }} className="ml-3 bg-blue-600 text-white">Show location</Button>
+                          </div>
+                        )}
+                      </div>
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -539,9 +599,12 @@ export default function UserDashboard() {
               <div className="pt-2">
                 {driverLocationInfo.driverLocation && driverLocationInfo.driverLocation.latitude && driverLocationInfo.driverLocation.longitude ? (
                   <div>
+                    {/* Map shown only when driver accepted and has location */}
                     <DriverLocationMap
                       latitude={Number(driverLocationInfo.driverLocation.latitude)}
                       longitude={Number(driverLocationInfo.driverLocation.longitude)}
+                      destLatitude={driverLocationInfo.pickupLatitude != null ? Number(driverLocationInfo.pickupLatitude) : undefined}
+                      destLongitude={driverLocationInfo.pickupLongitude != null ? Number(driverLocationInfo.pickupLongitude) : undefined}
                       zoom={15}
                     />
                     <div className="flex gap-2 pt-2">
@@ -557,6 +620,34 @@ export default function UserDashboard() {
                         target="_blank"
                         rel="noreferrer"
                       >Open in OSM</a>
+                      <Button
+                        variant="outline"
+                        className="border-red-300 text-red-600"
+                        onClick={async () => {
+                          if (!driverLocationInfo || !driverLocationInfo.requestId) return;
+                          if (!confirm('Are you sure you want to cancel this request?')) return;
+                          const token = localStorage.getItem('token');
+                          if (!token) return;
+                          try {
+                            const res = await fetch(`http://localhost:5000/api/emergency-requests/${driverLocationInfo.requestId}/cancel`, {
+                              method: 'POST',
+                              headers: { Authorization: `Bearer ${token}` }
+                            });
+                            if (res.ok) {
+                              setMessage('Your request was cancelled.');
+                              setShowDriverLocationModal(false);
+                            } else {
+                              const err = await res.json();
+                              setMessage(`Failed to cancel request: ${err.message || 'Unknown error'}`);
+                            }
+                          } catch (e) {
+                            console.error('Error cancelling request:', e);
+                            setMessage('Error cancelling request.');
+                          }
+                        }}
+                      >
+                        Cancel Request
+                      </Button>
                     </div>
                   </div>
                 ) : (

@@ -5,6 +5,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import router from './routes/routes.js';
+import pool from './db.js';
 
 // Load environment variables
 dotenv.config();
@@ -43,8 +44,27 @@ io.on('connection', (socket) => {
   });
 
   // Driver updates location
-  socket.on('update-location', (data) => {
-    socket.broadcast.emit('driver-location-updated', data);
+  socket.on('update-location', async (data) => {
+    // data expected: { driverId, latitude, longitude }
+    console.log('🔔 socket update-location received from', socket.id, data);
+    try {
+      if (data && data.driverId && data.latitude != null && data.longitude != null) {
+        // Persist latest location to driver_profiles for map initial load
+        try {
+          await pool.query(
+            'UPDATE driver_profiles SET current_latitude = $1, current_longitude = $2 WHERE id = $3',
+            [data.latitude, data.longitude, data.driverId]
+          );
+        } catch (dbErr) {
+          console.error('Failed to persist driver location:', dbErr.message);
+        }
+      }
+
+      // Broadcast to other clients so requester modal can update in real-time
+      socket.broadcast.emit('driver-location-updated', data);
+    } catch (err) {
+      console.error('Error handling update-location socket event:', err.message || err);
+    }
   });
 
   // Driver status change

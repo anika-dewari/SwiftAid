@@ -34,6 +34,7 @@ import {
   Navigation,
 } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
+import DriverLocationMap from '@/components/ui/driver-location-map';
 
 export default function DriverDashboard() {
   const router = useRouter();
@@ -51,6 +52,8 @@ export default function DriverDashboard() {
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
   const [acceptingRequestId, setAcceptingRequestId] = useState<string | null>(null);
+  const [activeRequest, setActiveRequest] = useState<any | null>(null);
+  const [showNavigationModal, setShowNavigationModal] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -91,12 +94,96 @@ export default function DriverDashboard() {
       fetchPendingRequests(token);
     });
 
+    // (geolocation watcher is handled in a separate effect that depends on `profile` and `socket`)
+
     setSocket(newSocket);
 
     return () => {
       newSocket.disconnect();
     };
   }, [router]);
+
+  // Try to fetch any currently assigned active request for this driver
+  const fetchActiveRequest = async (token?: string) => {
+    try {
+      const t = token || localStorage.getItem('token');
+      if (!t) return null;
+      const res = await fetch('http://localhost:5000/api/drivers/requests', {
+        headers: { Authorization: `Bearer ${t}` }
+      });
+      if (!res.ok) return null;
+      const json = await res.json();
+      // find most recent active request assigned to this driver
+      const active = (json.requests || []).find((r: any) => ['accepted', 'in_progress'].includes(r.status));
+      if (active) setActiveRequest(active);
+      return active;
+    } catch (e) {
+      console.warn('Failed to fetch active request:', e);
+      return null;
+    }
+  };
+
+  // On mount, try to populate activeRequest if driver already assigned
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) fetchActiveRequest(token);
+  }, []);
+
+  // Manage geolocation watcher when profile and socket are available
+  useEffect(() => {
+    if (!socket || !profile) return;
+
+    let geoWatchId: number | null = null;
+
+    const startGeolocation = () => {
+      if (!('geolocation' in navigator)) return;
+      try {
+        geoWatchId = navigator.geolocation.watchPosition((pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          if (socket && profile && profile.id) {
+            socket.emit('update-location', { driverId: profile.id, latitude: lat, longitude: lng });
+            // keep local profile coordinates up-to-date for map
+            setProfile((prev: any) => ({ ...(prev || {}), current_latitude: lat, current_longitude: lng }));
+          }
+        }, (err) => {
+          console.warn('Geolocation watch error:', err.message);
+        }, { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 });
+      } catch (e) {
+        console.warn('Failed to start geolocation:', e);
+      }
+    };
+
+    const stopGeolocation = () => {
+      try {
+        if (geoWatchId != null && 'geolocation' in navigator) {
+          navigator.geolocation.clearWatch(geoWatchId);
+          geoWatchId = null;
+        }
+      } catch (e) {}
+    };
+
+    // Start if driver is available or busy
+    if (profile.status === 'available' || profile.status === 'busy') {
+      startGeolocation();
+    }
+
+    // Watch for status changes on this socket to start/stop watcher
+    const statusHandler = (d: any) => {
+      try {
+        if (!d || d.driverId !== profile.id) return;
+        if (d.status === 'available' || d.status === 'busy') startGeolocation();
+        else stopGeolocation();
+      } catch (e) {}
+    };
+
+    socket.on('driver-status-changed', statusHandler);
+
+    return () => {
+      stopGeolocation();
+      socket.off('driver-status-changed', statusHandler);
+    };
+  }, [socket, profile]);
 
   const fetchProfile = async (token: string) => {
     console.log('🔄 Fetching driver profile...');
@@ -229,6 +316,9 @@ export default function DriverDashboard() {
         
         // Remove from pending list
         setPendingRequests(prev => prev.filter(req => req.id !== requestId));
+        // Set active request and open navigation modal for driver
+        setActiveRequest(data.request || null);
+        setShowNavigationModal(true);
         
         // Refresh pending requests after a short delay
         setTimeout(() => fetchPendingRequests(token), 1000);
@@ -398,6 +488,20 @@ export default function DriverDashboard() {
                 </Badge>
               )}
             </Button>
+            {/* Navigate button - only show when driver has accepted a request */}
+            {activeRequest && (profile?.status === 'busy' || profile?.status === 'available') && (
+              <Button
+                className="bg-blue-600 text-white"
+                onClick={async () => {
+                  if (!activeRequest) {
+                    await fetchActiveRequest();
+                  }
+                  if (activeRequest) setShowNavigationModal(true);
+                }}
+              >
+                Navigate
+              </Button>
+            )}
             <Button 
               variant="outline" 
               onClick={handleLogout}
@@ -639,6 +743,125 @@ export default function DriverDashboard() {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Active Request Modal (maps removed) */}
+        {showNavigationModal && activeRequest && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setShowNavigationModal(false)}>
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="relative max-w-3xl w-full rounded-2xl bg-white dark:bg-gray-900 p-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-lg font-bold">Active Trip</h3>
+                  <p className="text-sm text-muted-foreground">Patient: {activeRequest.patient_name}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" onClick={() => setShowNavigationModal(false)}>Close</Button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm"><strong>Pickup:</strong> {activeRequest.pickup_address || `${activeRequest.pickup_latitude?.toFixed?.(4) || activeRequest.pickup_latitude}, ${activeRequest.pickup_longitude?.toFixed?.(4) || activeRequest.pickup_longitude}`}</p>
+                  <p className="text-sm"><strong>Patient:</strong> {activeRequest.patient_name} • {activeRequest.patient_phone}</p>
+                </div>
+
+                {/* Map shown only when trip is accepted and driver has location */}
+                {profile?.current_latitude != null && profile?.current_longitude != null && activeRequest.pickup_latitude != null && activeRequest.pickup_longitude != null && (
+                  <div className="border rounded-lg overflow-hidden">
+                    <DriverLocationMap
+                      latitude={Number(profile.current_latitude)}
+                      longitude={Number(profile.current_longitude)}
+                      destLatitude={Number(activeRequest.pickup_latitude)}
+                      destLongitude={Number(activeRequest.pickup_longitude)}
+                      zoom={14}
+                    />
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Button
+                    className="bg-red-600 text-white"
+                    onClick={async () => {
+                      if (!activeRequest || !activeRequest.id) return;
+                      const token = localStorage.getItem('token');
+                      if (!token) return;
+                      try {
+                        const res = await fetch(`http://localhost:5000/api/emergency-requests/${activeRequest.id}/status`, {
+                          method: 'PATCH',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                          },
+                          body: JSON.stringify({ status: 'completed' })
+                        });
+                        if (res.ok) {
+                          const json = await res.json();
+                          setMessage('Trip marked completed. Thank you!');
+                          setShowNavigationModal(false);
+                          setActiveRequest(null);
+                          setStatus('available');
+                          // update stats locally and refresh profile
+                          setStats((prev: any) => ({
+                            completed_trips: (prev?.completed_trips || 0) + 1,
+                            active_trips: Math.max(0, (prev?.active_trips || 1) - 1)
+                          }));
+                          const t = localStorage.getItem('token');
+                          if (t) fetchProfile(t);
+                        } else {
+                          const err = await res.json();
+                          console.error('Failed to complete trip:', err);
+                          setMessage(`Failed to complete trip: ${err.message || 'Unknown error'}`);
+                        }
+                      } catch (e) {
+                        console.error('Error completing trip:', e);
+                        setMessage('Error completing trip. Please try again.');
+                      }
+                    }}
+                  >
+                    Complete Trip
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="border-red-300 text-red-600"
+                    onClick={async () => {
+                      if (!activeRequest || !activeRequest.id) return;
+                      if (!confirm('Are you sure you want to cancel this trip?')) return;
+                      const token = localStorage.getItem('token');
+                      if (!token) return;
+                      try {
+                        const res = await fetch(`http://localhost:5000/api/emergency-requests/${activeRequest.id}/cancel`, {
+                          method: 'POST',
+                          headers: { Authorization: `Bearer ${token}` }
+                        });
+                        if (res.ok) {
+                          setMessage('Trip cancelled.');
+                          setShowNavigationModal(false);
+                          setActiveRequest(null);
+                          setStatus('available');
+                          setStats((prev: any) => ({
+                            ...prev,
+                            active_trips: Math.max(0, (prev?.active_trips || 1) - 1)
+                          }));
+                          const t = localStorage.getItem('token');
+                          if (t) fetchProfile(t);
+                        } else {
+                          const err = await res.json();
+                          setMessage(`Failed to cancel trip: ${err.message || 'Unknown error'}`);
+                        }
+                      } catch (e) {
+                        console.error('Error cancelling trip:', e);
+                        setMessage('Error cancelling trip.');
+                      }
+                    }}
+                  >
+                    Cancel Trip
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Profile Card */}

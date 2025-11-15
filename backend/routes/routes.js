@@ -48,6 +48,7 @@ import {
   getPendingRequests,
   acceptEmergencyRequest,
   updateRequestStatus,
+  cancelEmergencyRequest,
   assignDriverToRequest,
 } from '../controllers/emergencyRequestController.js';
 
@@ -132,6 +133,9 @@ router.post('/emergency-requests/:id/accept', authenticateToken, authorizeRole('
 
 // Update request status (driver can update status: en_route, arrived, completed)
 router.patch('/emergency-requests/:id/status', authenticateToken, authorizeRole('driver'), updateRequestStatus);
+
+// Cancel request (request owner or assigned driver)
+router.post('/emergency-requests/:id/cancel', authenticateToken, cancelEmergencyRequest);
 
 // Update/Delete (admin only)
 router.put('/emergency-requests/:id', authenticateToken, authorizeRole('admin'), updateEmergencyRequest);
