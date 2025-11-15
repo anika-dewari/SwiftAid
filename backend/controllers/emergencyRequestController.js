@@ -26,19 +26,38 @@ export const addEmergencyRequest = async (req, res) => {
       send_sms // SMS flag from frontend
     } = req.body;
 
+    console.log('📝 Emergency request received:', {
+      patient_name,
+      patient_phone,
+      emergency_type,
+      severity,
+      pickup_latitude,
+      pickup_longitude,
+      userId,
+      send_sms
+    });
+
     if (!patient_name || !patient_phone || !emergency_type || !pickup_latitude || !pickup_longitude) {
+      console.error('❌ Missing required fields');
       return res.status(400).json({ error: 'Please provide all required fields' });
     }
+
+    // Ensure severity is valid for database schema
+    const validSeverities = ['low', 'medium', 'high', 'critical'];
+    const finalSeverity = validSeverities.includes(severity) ? severity : 'medium';
+
+    console.log(`📊 Using severity: ${finalSeverity}`);
 
     const result = await pool.query(
       `INSERT INTO emergency_requests 
        (user_id, patient_name, patient_phone, emergency_type, severity, pickup_latitude, pickup_longitude, pickup_address, destination_hospital_id, notes, status)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending')
        RETURNING *;`,
-      [userId, patient_name, patient_phone, emergency_type, severity || 'medium', pickup_latitude, pickup_longitude, pickup_address, destination_hospital_id, notes]
+      [userId, patient_name, patient_phone, emergency_type, finalSeverity, pickup_latitude, pickup_longitude, pickup_address, destination_hospital_id, notes]
     );
 
     const request = result.rows[0];
+    console.log('✅ Emergency request created:', request.id);
 
     // Find nearby available drivers and notify them
     const driversQuery = `
@@ -57,20 +76,28 @@ export const addEmergencyRequest = async (req, res) => {
       LIMIT 10
     `;
 
-    const driversResult = await pool.query(driversQuery, [pickup_latitude, pickup_longitude]);
+    let driversResult = { rows: [] };
+    try {
+      driversResult = await pool.query(driversQuery, [pickup_latitude, pickup_longitude]);
+      console.log(`📍 Found ${driversResult.rows.length} nearby drivers`);
+    } catch (driverError) {
+      console.error('⚠️ Error fetching nearby drivers (continuing):', driverError.message);
+    }
 
     // Create notifications for nearby drivers (NO SMS - only in-app)
-    const notificationPromises = driversResult.rows.map(driver =>
-      createNotification(
-        driver.user_id,
-        'New Emergency Request',
-        `Emergency: ${emergency_type} - Patient: ${patient_name}`,
-        'emergency_request',
-        request.id
-      )
-    );
+    if (driversResult.rows.length > 0) {
+      const notificationPromises = driversResult.rows.map(driver =>
+        createNotification(
+          driver.user_id,
+          'New Emergency Request',
+          `Emergency: ${emergency_type} - Patient: ${patient_name}`,
+          'emergency_request',
+          request.id
+        ).catch(err => console.error(`⚠️ Notification error for driver ${driver.user_id}:`, err.message))
+      );
 
-    await Promise.all(notificationPromises);
+      await Promise.all(notificationPromises);
+    }
 
     // Send SMS to drivers if enabled
     let smsResults = { sent: 0, failed: 0 };
@@ -100,7 +127,7 @@ export const addEmergencyRequest = async (req, res) => {
             smsMessage += `📞 Contact: ${patient_phone}\n`;
             smsMessage += `📍 Location: ${pickup_address || `GPS: ${pickup_latitude}, ${pickup_longitude}`}\n`;
             smsMessage += `🚑 Type: ${emergency_type}\n`;
-            smsMessage += `⚠️ Severity: ${(severity || 'medium').toUpperCase()}\n`;
+            smsMessage += `⚠️ Severity: ${(finalSeverity || 'medium').toUpperCase()}\n`;
             
             // Add medical info if available
             if (medicalInfo.length > 0) {
@@ -140,7 +167,7 @@ export const addEmergencyRequest = async (req, res) => {
           requestId: request.id,
           patientName: patient_name,
           emergencyType: emergency_type,
-          severity: severity,
+          severity: finalSeverity,
           location: { latitude: pickup_latitude, longitude: pickup_longitude }
         });
       });
@@ -153,8 +180,13 @@ export const addEmergencyRequest = async (req, res) => {
       smsResults: send_sms ? smsResults : { sent: 0, failed: 0, reason: 'SMS disabled' }
     });
   } catch (err) {
-    console.error('Add emergency request error:', err);
-    res.status(500).json({ error: 'Failed to add emergency request' });
+    console.error('❌ Add emergency request error:', err);
+    console.error('❌ Error stack:', err.stack);
+    console.error('❌ Error message:', err.message);
+    res.status(500).json({ 
+      error: 'Failed to add emergency request',
+      details: err.message 
+    });
   }
 };
 
@@ -438,18 +470,18 @@ export const deleteEmergencyRequest = async (req, res) => {
   }
 };
 
-// Update request status with SMS notifications (driver updates: en_route, arrived, completed)
+// Update request status with SMS notifications (driver updates: in_progress, completed)
 export const updateRequestStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, eta } = req.body; // status: 'en_route', 'arrived', 'completed'
+    const { status, eta } = req.body; // status: 'in_progress', 'completed'
     const userId = req.user.userId;
 
-    // Validate status
-    const validStatuses = ['en_route', 'arrived', 'completed', 'cancelled'];
+    // Validate status - must match database schema
+    const validStatuses = ['in_progress', 'completed', 'cancelled'];
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({ 
-        error: 'Invalid status. Must be one of: en_route, arrived, completed, cancelled' 
+        error: 'Invalid status. Must be one of: in_progress, completed, cancelled' 
       });
     }
 
@@ -508,14 +540,9 @@ export const updateRequestStatus = async (req, res) => {
     if (user.phone) {
       try {
         switch (status) {
-          case 'en_route':
+          case 'in_progress':
             await notifyUserDriverEnRoute(user, driver, eta || '8-10');
             console.log(`✅ SMS sent to user: Driver en route`);
-            break;
-
-          case 'arrived':
-            await notifyUserDriverArrived(user, driver);
-            console.log(`✅ SMS sent to user: Driver arrived`);
             break;
 
           case 'completed':
@@ -541,8 +568,7 @@ export const updateRequestStatus = async (req, res) => {
     // Send in-app notification
     if (request.user_id) {
       const notificationMessages = {
-        en_route: 'Your ambulance is on the way!',
-        arrived: 'Your ambulance has arrived at your location.',
+        in_progress: 'Your ambulance is on the way!',
         completed: 'Trip completed. Thank you for using SwiftAid!',
         cancelled: 'Your request has been cancelled.'
       };

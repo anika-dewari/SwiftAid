@@ -170,7 +170,7 @@ export default function EmergencyRequestHandler() {
         const request = requests.find(r => r.id === requestId);
         
         // Call backend API to send SMS
-        const response = await fetch('http://localhost:5001/api/send-driver-sms', {
+        const response = await fetch('http://localhost:5000/api/send-driver-sms', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

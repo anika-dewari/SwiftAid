@@ -675,7 +675,7 @@ function getSampleHospitals() {
             name: 'Fortis Hospital',
             type: 'general',
             phone: '+91-11-47135000',
-            emergencyContact: '+91-11-47135001',
+            emergencyContact: '+91-11-47135000',
             address: 'B-22, Sector 62, Noida, Uttar Pradesh',
             city: 'Noida',
             pincode: '201301',

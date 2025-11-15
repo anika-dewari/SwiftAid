@@ -91,7 +91,7 @@ export default function EmergencyPortal() {
     
     try {
       // Call backend API
-      const response = await fetch('http://localhost:5001/api/emergency-requests', {
+      const response = await fetch('http://localhost:5000/api/emergency-requests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

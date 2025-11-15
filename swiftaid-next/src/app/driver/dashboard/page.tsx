@@ -76,7 +76,7 @@ export default function DriverDashboard() {
     fetchNotifications(token);
 
     // Setup Socket.IO
-    const newSocket = io('http://localhost:5001');
+    const newSocket = io('http://localhost:5000');
     newSocket.on('connect', () => {
       console.log('Connected to server');
       newSocket.emit('join-user-room', parsedUser.id);
@@ -98,7 +98,7 @@ export default function DriverDashboard() {
     console.log('🔄 Fetching driver profile...');
     setIsLoadingProfile(true);
     try {
-      const response = await fetch('http://localhost:5001/api/drivers/profile', {
+      const response = await fetch('http://localhost:5000/api/drivers/profile', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -158,7 +158,7 @@ export default function DriverDashboard() {
 
   const fetchStats = async (token: string) => {
     try {
-      const response = await fetch('http://localhost:5001/api/drivers/stats', {
+      const response = await fetch('http://localhost:5000/api/drivers/stats', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -179,7 +179,7 @@ export default function DriverDashboard() {
 
   const fetchNotifications = async (token: string) => {
     try {
-      const response = await fetch('http://localhost:5001/api/notifications?unreadOnly=true', {
+      const response = await fetch('http://localhost:5000/api/notifications?unreadOnly=true', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -200,7 +200,7 @@ export default function DriverDashboard() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5001/api/drivers/status', {
+      const response = await fetch('http://localhost:5000/api/drivers/status', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -229,7 +229,7 @@ export default function DriverDashboard() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5001/api/drivers/profile', {
+      const response = await fetch('http://localhost:5000/api/drivers/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

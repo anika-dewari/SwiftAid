@@ -53,7 +53,7 @@ export default function UserDashboard() {
     fetchDrivers(token);
 
     // Setup Socket.IO for real-time updates
-    const newSocket = io('http://localhost:5001');
+    const newSocket = io('http://localhost:5000');
     newSocket.on('connect', () => {
       console.log('Connected to server');
       newSocket.emit('join-user-room', parsedUser.id);
@@ -80,7 +80,7 @@ export default function UserDashboard() {
 
   const fetchNotifications = async (token: string) => {
     try {
-      const response = await fetch('http://localhost:5001/api/notifications?unreadOnly=true', {
+      const response = await fetch('http://localhost:5000/api/notifications?unreadOnly=true', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -97,7 +97,7 @@ export default function UserDashboard() {
 
   const fetchDrivers = async (token: string) => {
     try {
-      const response = await fetch('http://localhost:5001/api/drivers', {
+      const response = await fetch('http://localhost:5000/api/drivers', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
