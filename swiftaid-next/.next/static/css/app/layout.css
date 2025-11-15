@@ -1563,6 +1563,13 @@ body{
 .bg-yellow-500\/20{
   background-color: rgb(234 179 8 / 0.2);
 }
+.bg-black\/40{
+  background-color: rgb(0 0 0 / 0.4);
+}
+.bg-blue-600{
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
+}
 .bg-gradient-to-b{
   background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
 }
@@ -2426,6 +2433,9 @@ body{
 .text-yellow-800{
   --tw-text-opacity: 1;
   color: rgb(133 77 14 / var(--tw-text-opacity, 1));
+}
+.text-muted{
+  color: hsl(var(--muted));
 }
 .underline{
   text-decoration-line: underline;
@@ -3612,6 +3622,11 @@ body {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.hover\:text-gray-700:hover{
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity, 1));
+}
+
 .hover\:underline:hover{
   text-decoration-line: underline;
 }
@@ -4233,6 +4248,11 @@ body {
   background-color: rgb(113 63 18 / 0.3);
 }
 
+.dark\:bg-gray-900:is(.dark *){
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
+}
+
 .dark\:from-blue-500\/20:is(.dark *){
   --tw-gradient-from: rgb(59 130 246 / 0.2) var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(59 130 246 / 0) var(--tw-gradient-to-position);
@@ -4320,6 +4340,12 @@ body {
 .dark\:from-yellow-950:is(.dark *){
   --tw-gradient-from: #422006 var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(66 32 6 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.dark\:from-slate-900\/20:is(.dark *){
+  --tw-gradient-from: rgb(15 23 42 / 0.2) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(15 23 42 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -4441,6 +4467,10 @@ body {
 
 .dark\:to-white:is(.dark *){
   --tw-gradient-to: #fff var(--tw-gradient-to-position);
+}
+
+.dark\:to-slate-800\/20:is(.dark *){
+  --tw-gradient-to: rgb(30 41 59 / 0.2) var(--tw-gradient-to-position);
 }
 
 .dark\:text-amber-200:is(.dark *){

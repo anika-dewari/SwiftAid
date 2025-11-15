@@ -1,4 +1,8 @@
 {
   "/page": "app/page.js",
-  "/driver/dashboard/page": "app/driver/dashboard/page.js"
+  "/dashboard/page": "app/dashboard/page.js",
+  "/driver/dashboard/page": "app/driver/dashboard/page.js",
+  "/auth/register/page": "app/auth/register/page.js",
+  "/emergency/page": "app/emergency/page.js",
+  "/user/dashboard/page": "app/user/dashboard/page.js"
 }

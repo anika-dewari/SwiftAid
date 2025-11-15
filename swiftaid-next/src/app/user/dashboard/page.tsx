@@ -28,6 +28,7 @@ import {
   Bell,
 } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
+import DriverLocationMap from '@/components/ui/driver-location-map';
 
 export default function UserDashboard() {
   const router = useRouter();
@@ -38,6 +39,8 @@ export default function UserDashboard() {
   const [message, setMessage] = useState('');
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [showDriverLocationModal, setShowDriverLocationModal] = useState(false);
+  const [driverLocationInfo, setDriverLocationInfo] = useState<any | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -64,8 +67,20 @@ export default function UserDashboard() {
       fetchDrivers(token);
     });
 
+    // Listen for live driver location updates and update modal/map if relevant
+    newSocket.on('driver-location-updated', (data: any) => {
+      // data expected: { driverId, latitude, longitude }
+      console.log('driver-location-updated', data);
+      if (driverLocationInfo && data.driverId === driverLocationInfo.driverId) {
+        setDriverLocationInfo((prev: any) => ({ ...(prev || {}), driverLocation: { latitude: data.latitude, longitude: data.longitude } }));
+      }
+    });
+
     newSocket.on('request-accepted', (data: any) => {
-      setMessage(`Your request has been accepted by a driver!`);
+      console.log('Request accepted event received:', data);
+      setMessage(`Your request has been accepted by ${data.driverName || 'a driver'}!`);
+      setDriverLocationInfo(data);
+      setShowDriverLocationModal(true);
     });
 
     setSocket(newSocket);
@@ -491,6 +506,68 @@ export default function UserDashboard() {
       </div>
 
       {/* Liquid Glass Notification Modal */}
+      {/* Driver Location Modal */}
+      {showDriverLocationModal && driverLocationInfo && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
+          onClick={() => setShowDriverLocationModal(false)}
+        >
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="relative max-w-md w-full rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-2xl" onClick={(e)=>e.stopPropagation()}>
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-bold">Driver On The Way</h3>
+                <p className="text-sm text-muted-foreground">{driverLocationInfo.driverName || 'Driver' } is en route to your location.</p>
+              </div>
+              <button onClick={() => setShowDriverLocationModal(false)} className="text-gray-500 hover:text-gray-700">Close</button>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              <div className="text-sm">
+                <strong>Driver:</strong> {driverLocationInfo.driverName || 'N/A'}
+              </div>
+              <div className="text-sm">
+                <strong>Phone:</strong> {driverLocationInfo.driverPhone || 'N/A'}
+              </div>
+              <div className="text-sm">
+                <strong>Vehicle:</strong> {driverLocationInfo.vehicleNumber || 'N/A'} {driverLocationInfo.vehicleModel ? `• ${driverLocationInfo.vehicleModel}` : ''}
+              </div>
+              <div className="text-sm">
+                <strong>ETA:</strong> {driverLocationInfo.eta || 'N/A'} minutes
+              </div>
+
+              <div className="pt-2">
+                {driverLocationInfo.driverLocation && driverLocationInfo.driverLocation.latitude && driverLocationInfo.driverLocation.longitude ? (
+                  <div>
+                    <DriverLocationMap
+                      latitude={Number(driverLocationInfo.driverLocation.latitude)}
+                      longitude={Number(driverLocationInfo.driverLocation.longitude)}
+                      zoom={15}
+                    />
+                    <div className="flex gap-2 pt-2">
+                      <a
+                        className="inline-block px-3 py-2 bg-blue-600 text-white rounded-md"
+                        href={`https://www.google.com/maps/search/?api=1&query=${driverLocationInfo.driverLocation.latitude},${driverLocationInfo.driverLocation.longitude}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >Open in Google Maps</a>
+                      <a
+                        className="inline-block px-3 py-2 border rounded-md"
+                        href={`https://www.openstreetmap.org/?mlat=${driverLocationInfo.driverLocation.latitude}&mlon=${driverLocationInfo.driverLocation.longitude}#map=18/${driverLocationInfo.driverLocation.latitude}/${driverLocationInfo.driverLocation.longitude}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >Open in OSM</a>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground">Driver location not yet available. You'll receive updates shortly.</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showNotificationModal && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300"

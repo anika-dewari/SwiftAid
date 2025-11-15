@@ -399,9 +399,19 @@ export const acceptEmergencyRequest = async (req, res) => {
       }
 
       if (req.io) {
+        // Emit accepted event with driver details and location so the requester can see driver on map
         req.io.to(`user_${request.user_id}`).emit('request-accepted', {
           requestId: id,
-          driverId: driverId
+          driverId: driverId,
+          driverName: driver.full_name,
+          driverPhone: driver.phone,
+          vehicleNumber: driver.vehicle_number,
+          vehicleModel: driver.vehicle_model,
+          driverLocation: {
+            latitude: driver.current_latitude || null,
+            longitude: driver.current_longitude || null
+          },
+          eta: '8-10'
         });
       }
     }

@@ -1,4 +1,5 @@
 import pool from '../db.js';
+import { notifyTripCompleted } from '../services/twilioService.js';
 
 // Get driver profile (for authenticated driver)
 export const getDriverProfile = async (req, res) => {
@@ -120,6 +121,15 @@ export const updateDriverStatus = async (req, res) => {
       return res.status(400).json({ message: 'Invalid status value' });
     }
 
+    // Fetch current driver profile to determine previous status
+    const existing = await pool.query('SELECT id, status FROM driver_profiles WHERE user_id = $1', [userId]);
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ message: 'Driver profile not found' });
+    }
+
+    const prevStatus = existing.rows[0].status;
+    const driverId = existing.rows[0].id;
+
     // Update driver status
     const updateQuery = `
       UPDATE driver_profiles
@@ -154,6 +164,57 @@ export const updateDriverStatus = async (req, res) => {
       });
     }
 
+    // If driver is transitioning from busy -> available, mark one active trip as completed
+    try {
+      if (prevStatus === 'busy' && status === 'available') {
+        // Find the most recent active request assigned to this driver
+        const activeReq = await pool.query(
+          `SELECT * FROM emergency_requests WHERE driver_id = $1 AND status IN ('accepted','in_progress') ORDER BY created_at DESC LIMIT 1`,
+          [driverId]
+        );
+
+        if (activeReq.rows.length > 0) {
+          const request = activeReq.rows[0];
+
+          // Mark request as completed
+          const completed = await pool.query(
+            `UPDATE emergency_requests SET status = $1, completed_at = NOW() WHERE id = $2 RETURNING *`,
+            ['completed', request.id]
+          );
+
+          // Increment driver's total_trips counter (if present)
+          await pool.query(
+            `UPDATE driver_profiles SET total_trips = COALESCE(total_trips,0) + 1 WHERE id = $1`,
+            [driverId]
+          );
+
+          // Notify user/driver about completion (best-effort)
+          try {
+            const durationMins = Math.round((new Date() - new Date(request.created_at)) / 60000);
+            if (request.patient_phone) {
+              await notifyTripCompleted(request.patient_phone, request.patient_name || 'Patient', durationMins);
+            }
+            // Notify driver (if phone available in profile)
+            const driverPhoneRes = await pool.query('SELECT u.phone FROM driver_profiles dp JOIN users u ON dp.user_id = u.id WHERE dp.id = $1', [driverId]);
+            if (driverPhoneRes.rows[0] && driverPhoneRes.rows[0].phone) {
+              await notifyTripCompleted(driverPhoneRes.rows[0].phone, driverPhoneRes.rows[0].phone, durationMins).catch(() => {});
+            }
+          } catch (notifyErr) {
+            console.error('Error sending trip-completed notifications:', notifyErr.message || notifyErr);
+          }
+
+          // Emit event about request status update
+          if (req.io && request.user_id) {
+            req.io.to(`user_${request.user_id}`).emit('request-status-updated', {
+              requestId: request.id,
+              status: 'completed'
+            });
+          }
+        }
+      }
+    } catch (innerErr) {
+      console.error('Error while finalizing active trip on status change:', innerErr);
+    }
     res.json({ 
       message: 'Status updated successfully',
       driver: result.rows[0] 
