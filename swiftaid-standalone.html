@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftAid - Emergency Dispatch System</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background-color: #1e40af;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-available {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-busy {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-online {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 4rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-logo {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #1e40af;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .nav-subtitle {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: #f1f5f9;
+            color: #1e40af;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+        }
+
+        .stat-card {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .action-card {
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            border-color: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-desc {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .container {
+                padding: 0 0.75rem;
+            }
+            
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Page Content */
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #1e40af;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Emergency specific styles */
+        .emergency-icon { background: #fef2f2; color: #dc2626; }
+        .ambulance-icon { background: #eff6ff; color: #1d4ed8; }
+        .hospital-icon { background: #f0fdf4; color: #059669; }
+        .driver-icon { background: #faf5ff; color: #7c3aed; }
+
+        /* Footer */
+        .footer {
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .footer-logo {
+            width: 2rem;
+            height: 2rem;
+            background: #1e40af;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Mock data
+        const mockData = {
+            stats: {
+                availableAmbulances: 18,
+                totalAmbulances: 24,
+                activeEmergencies: 7,
+                hospitalsOnline: 12,
+                availableBeds: 89,
+                totalBeds: 350
+            },
+            ambulances: [
+                { id: 1, number: 'AMB001', driver: 'John Smith', status: 'available', location: 'Central District', fuel: 85 },
+                { id: 2, number: 'AMB002', driver: 'Sarah Johnson', status: 'busy', location: 'Downtown', fuel: 70 },
+                { id: 3, number: 'AMB003', driver: 'Mike Wilson', status: 'available', location: 'North Side', fuel: 92 },
+                { id: 4, number: 'AMB004', driver: 'Emily Davis', status: 'maintenance', location: 'Service Center', fuel: 45 }
+            ],
+            hospitals: [
+                { id: 1, name: 'Central Medical', beds: 45, total: 120, emergency: 12, status: 'online' },
+                { id: 2, name: 'City General', beds: 28, total: 80, emergency: 8, status: 'online' },
+                { id: 3, name: 'Metro Hospital', beds: 16, total: 150, emergency: 15, status: 'online' }
+            ],
+            drivers: [
+                { id: 1, name: 'John Smith', license: 'CDL123456', expiry: '2025-12-15', status: 'active' },
+                { id: 2, name: 'Sarah Johnson', license: 'CDL234567', expiry: '2026-03-20', status: 'active' },
+                { id: 3, name: 'Mike Wilson', license: 'CDL345678', expiry: '2025-08-10', status: 'active' }
+            ]
+        };
+
+        // Navigation component
+        const Navigation = ({ currentPage, setCurrentPage }) => {
+            const navItems = [
+                { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
+                { id: 'emergency', label: 'Emergency', icon: '🚨' },
+                { id: 'ambulances', label: 'Ambulances', icon: '🚑' },
+                { id: 'hospitals', label: 'Hospitals', icon: '🏥' },
+                { id: 'drivers', label: 'Drivers', icon: '👨‍⚕️' }
+            ];
+
+            return (
+                <header className="header">
+                    <div className="container">
+                        <nav className="nav">
+                            <div className="nav-brand">
+                                <div className="nav-logo">🚑</div>
+                                <div>
+                                    <div className="nav-title">SwiftAid</div>
+                                    <div className="nav-subtitle">Emergency Dispatch</div>
+                                </div>
+                            </div>
+                            <div className="nav-menu">
+                                {navItems.map(item => (
+                                    <a 
+                                        key={item.id}
+                                        href="#" 
+                                        className={`nav-link ${currentPage === item.id ? 'active' : ''}`}
+                                        onClick={(e) => { e.preventDefault(); setCurrentPage(item.id); }}
+                                    >
+                                        {item.icon} {item.label}
+                                    </a>
+                                ))}
+                            </div>
+                        </nav>
+                    </div>
+                </header>
+            );
+        };
+
+        // Dashboard page
+        const Dashboard = () => {
+            const quickActions = [
+                { id: 'emergency', title: 'Emergency Portal', desc: 'Submit new emergency request', icon: '🚨', bgClass: 'emergency-icon' },
+                { id: 'ambulances', title: 'Manage Ambulances', desc: 'Fleet tracking and dispatch', icon: '🚑', bgClass: 'ambulance-icon' },
+                { id: 'hospitals', title: 'Hospital Network', desc: 'Monitor bed availability', icon: '🏥', bgClass: 'hospital-icon' },
+                { id: 'drivers', title: 'Driver Management', desc: 'Staff assignments and schedules', icon: '👨‍⚕️', bgClass: 'driver-icon' }
+            ];
+
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="page-title">
+                            <div className="page-icon" style={{background: '#eff6ff', color: '#1d4ed8'}}>🏠</div>
+                            Emergency Dispatch Dashboard
+                        </h1>
+                        <p className="page-subtitle">Real-time overview of emergency response operations</p>
+                    </div>
+
+                    {/* Statistics */}
+                    <div className="grid grid-4" style={{marginBottom: '2rem'}}>
+                        <div className="card stat-card">
+                            <div className="stat-number" style={{color: '#1d4ed8'}}>{mockData.stats.availableAmbulances}/{mockData.stats.totalAmbulances}</div>
+                            <div className="stat-label">Available Ambulances</div>
+                        </div>
+                        <div className="card stat-card">
+                            <div className="stat-number" style={{color: '#dc2626'}}>{mockData.stats.activeEmergencies}</div>
+                            <div className="stat-label">Active Emergencies</div>
+                        </div>
+                        <div className="card stat-card">
+                            <div className="stat-number" style={{color: '#059669'}}>{mockData.stats.hospitalsOnline}</div>
+                            <div className="stat-label">Hospitals Online</div>
+                        </div>
+                        <div className="card stat-card">
+                            <div className="stat-number" style={{color: '#7c3aed'}}>{mockData.stats.availableBeds}/{mockData.stats.totalBeds}</div>
+                            <div className="stat-label">Available Beds</div>
+                        </div>
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div>
+                        <h2 style={{fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem'}}>Quick Actions</h2>
+                        <div className="grid grid-2">
+                            {quickActions.map(action => (
+                                <div key={action.id} className="card action-card">
+                                    <div className={`action-icon ${action.bgClass}`}>{action.icon}</div>
+                                    <div className="action-title">{action.title}</div>
+                                    <div className="action-desc">{action.desc}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Emergency Portal page
+        const EmergencyPortal = () => {
+            const [formData, setFormData] = useState({
+                emergencyType: '',
+                priority: 'medium',
+                location: '',
+                description: '',
+                reporterName: '',
+                reporterPhone: ''
+            });
+
+            const [submitted, setSubmitted] = useState(false);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setSubmitted(true);
+                setTimeout(() => setSubmitted(false), 3000);
+            };
+
+            if (submitted) {
+                return (
+                    <div className="card" style={{textAlign: 'center', background: '#f0fdf4', border: '2px solid #22c55e'}}>
+                        <div style={{fontSize: '3rem', marginBottom: '1rem'}}>✅</div>
+                        <h2 style={{color: '#15803d', marginBottom: '1rem'}}>Emergency Submitted Successfully</h2>
+                        <p style={{color: '#166534'}}>Emergency ID: EM-{Date.now().toString().slice(-6)}</p>
+                        <p style={{color: '#16a34a', marginTop: '0.5rem'}}>Dispatching nearest available ambulance...</p>
+                    </div>
+                );
+            }
+
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="page-title">
+                            <div className="page-icon emergency-icon">🚨</div>
+                            Emergency Portal
+                        </h1>
+                        <p className="page-subtitle">Submit emergency requests for immediate dispatch</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="grid grid-2">
+                        <div className="card">
+                            <h3 style={{marginBottom: '1rem', color: '#dc2626'}}>🚨 Emergency Information</h3>
+                            
+                            <div className="form-group">
+                                <label className="form-label">Emergency Type *</label>
+                                <select 
+                                    className="form-select"
+                                    value={formData.emergencyType}
+                                    onChange={(e) => setFormData(prev => ({...prev, emergencyType: e.target.value}))}
+                                    required
+                                >
+                                    <option value="">Select emergency type</option>
+                                    <option value="cardiac">Cardiac Emergency</option>
+                                    <option value="respiratory">Respiratory Emergency</option>
+                                    <option value="accident">Traffic Accident</option>
+                                    <option value="trauma">Fall/Trauma</option>
+                                    <option value="other">Other Medical Emergency</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Priority Level *</label>
+                                <select 
+                                    className="form-select"
+                                    value={formData.priority}
+                                    onChange={(e) => setFormData(prev => ({...prev, priority: e.target.value}))}
+                                >
+                                    <option value="low">Low - Non-urgent</option>
+                                    <option value="medium">Medium - Urgent</option>
+                                    <option value="high">High - Critical</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Location *</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    value={formData.location}
+                                    onChange={(e) => setFormData(prev => ({...prev, location: e.target.value}))}
+                                    placeholder="Enter address or coordinates"
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Description *</label>
+                                <textarea
+                                    className="form-textarea"
+                                    value={formData.description}
+                                    onChange={(e) => setFormData(prev => ({...prev, description: e.target.value}))}
+                                    placeholder="Describe the emergency situation..."
+                                    rows="4"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="card">
+                            <h3 style={{marginBottom: '1rem', color: '#1d4ed8'}}>👤 Reporter Information</h3>
+                            
+                            <div className="form-group">
+                                <label className="form-label">Full Name *</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    value={formData.reporterName}
+                                    onChange={(e) => setFormData(prev => ({...prev, reporterName: e.target.value}))}
+                                    placeholder="Enter your full name"
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Phone Number *</label>
+                                <input
+                                    type="tel"
+                                    className="form-input"
+                                    value={formData.reporterPhone}
+                                    onChange={(e) => setFormData(prev => ({...prev, reporterPhone: e.target.value}))}
+                                    placeholder="(555) 123-4567"
+                                    required
+                                />
+                            </div>
+
+                            <div style={{marginTop: '2rem'}}>
+                                <button type="submit" className="btn btn-primary" style={{width: '100%', padding: '1rem', fontSize: '1rem', background: '#dc2626'}}>
+                                    🚨 Submit Emergency
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            );
+        };
+
+        // Ambulances page
+        const Ambulances = () => {
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="page-title">
+                            <div className="page-icon ambulance-icon">🚑</div>
+                            Ambulance Management
+                        </h1>
+                        <p className="page-subtitle">Monitor and manage ambulance fleet</p>
+                    </div>
+
+                    <div className="grid grid-2">
+                        {mockData.ambulances.map(ambulance => (
+                            <div key={ambulance.id} className="card">
+                                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem'}}>
+                                    <div>
+                                        <h3 style={{fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem'}}>{ambulance.number}</h3>
+                                        <span className={`status-badge status-${ambulance.status === 'maintenance' ? 'busy' : ambulance.status}`}>
+                                            {ambulance.status}
+                                        </span>
+                                    </div>
+                                    <div style={{fontSize: '1.5rem'}}>🚑</div>
+                                </div>
+                                
+                                <div style={{fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem'}}>
+                                    👨‍⚕️ {ambulance.driver}
+                                </div>
+                                
+                                <div style={{fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem'}}>
+                                    📍 {ambulance.location}
+                                </div>
+                                
+                                <div style={{fontSize: '0.875rem', color: ambulance.fuel > 70 ? '#059669' : ambulance.fuel > 40 ? '#d97706' : '#dc2626'}}>
+                                    ⛽ {ambulance.fuel}% Fuel
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // Hospitals page
+        const Hospitals = () => {
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="page-title">
+                            <div className="page-icon hospital-icon">🏥</div>
+                            Hospital Management
+                        </h1>
+                        <p className="page-subtitle">Monitor hospital capacity and availability</p>
+                    </div>
+
+                    <div className="grid grid-2">
+                        {mockData.hospitals.map(hospital => (
+                            <div key={hospital.id} className="card">
+                                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem'}}>
+                                    <div>
+                                        <h3 style={{fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem'}}>{hospital.name}</h3>
+                                        <span className={`status-badge status-${hospital.status}`}>
+                                            {hospital.status}
+                                        </span>
+                                    </div>
+                                    <div style={{fontSize: '1.5rem'}}>🏥</div>
+                                </div>
+                                
+                                <div style={{background: '#f8fafc', padding: '1rem', borderRadius: '8px'}}>
+                                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', textAlign: 'center'}}>
+                                        <div>
+                                            <div style={{fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b'}}>{hospital.total}</div>
+                                            <div style={{fontSize: '0.75rem', color: '#64748b'}}>Total</div>
+                                        </div>
+                                        <div>
+                                            <div style={{fontSize: '1.25rem', fontWeight: 'bold', color: '#059669'}}>{hospital.beds}</div>
+                                            <div style={{fontSize: '0.75rem', color: '#64748b'}}>Available</div>
+                                        </div>
+                                        <div>
+                                            <div style={{fontSize: '1.25rem', fontWeight: 'bold', color: '#dc2626'}}>{hospital.emergency}</div>
+                                            <div style={{fontSize: '0.75rem', color: '#64748b'}}>Emergency</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{marginTop: '0.5rem', background: '#e2e8f0', borderRadius: '4px', height: '8px'}}>
+                                        <div 
+                                            style={{
+                                                height: '100%', 
+                                                background: '#059669', 
+                                                borderRadius: '4px', 
+                                                width: `${(hospital.beds / hospital.total) * 100}%`
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // Drivers page
+        const Drivers = () => {
+            return (
+                <div>
+                    <div className="page-header">
+                        <h1 className="page-title">
+                            <div className="page-icon driver-icon">👨‍⚕️</div>
+                            Driver Management
+                        </h1>
+                        <p className="page-subtitle">Manage driver information and assignments</p>
+                    </div>
+
+                    <div className="grid grid-2">
+                        {mockData.drivers.map(driver => (
+                            <div key={driver.id} className="card">
+                                <div style={{display: 'flex', alignItems: 'start', gap: '1rem', marginBottom: '1rem'}}>
+                                    <div style={{
+                                        width: '3rem', 
+                                        height: '3rem', 
+                                        background: 'linear-gradient(135deg, #1d4ed8, #7c3aed)', 
+                                        borderRadius: '50%', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center', 
+                                        color: 'white', 
+                                        fontWeight: 'bold'
+                                    }}>
+                                        {driver.name.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                    <div style={{flex: 1}}>
+                                        <h3 style={{fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.25rem'}}>{driver.name}</h3>
+                                        <span className={`status-badge status-${driver.status === 'active' ? 'available' : 'busy'}`}>
+                                            {driver.status}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div style={{fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem'}}>
+                                    📄 License: {driver.license}
+                                </div>
+                                
+                                <div style={{fontSize: '0.875rem', color: '#64748b'}}>
+                                    📅 Expires: {new Date(driver.expiry).toLocaleDateString()}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App component
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('dashboard');
+
+            const renderPage = () => {
+                switch(currentPage) {
+                    case 'dashboard': return <Dashboard />;
+                    case 'emergency': return <EmergencyPortal />;
+                    case 'ambulances': return <Ambulances />;
+                    case 'hospitals': return <Hospitals />;
+                    case 'drivers': return <Drivers />;
+                    default: return <Dashboard />;
+                }
+            };
+
+            return (
+                <div>
+                    <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                    <main className="main">
+                        <div className="container">
+                            {renderPage()}
+                        </div>
+                    </main>
+                    <footer className="footer">
+                        <div className="container">
+                            <div className="footer-content">
+                                <div className="footer-brand">
+                                    <div className="footer-logo">🚑</div>
+                                    <div>
+                                        <div style={{fontWeight: '600', color: '#f1f5f9'}}>SwiftAid Emergency Dispatch</div>
+                                        <div style={{fontSize: '0.75rem'}}>Saving lives through technology</div>
+                                    </div>
+                                </div>
+                                <div style={{fontSize: '0.875rem'}}>
+                                    © 2025 SwiftAid. All rights reserved.
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        // Render the app
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
